@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Width,Text, height, View, Image, ScrollView, TouchableOpacity, Button} from 'react-native';
-import WelcomeCard from './WelcomeCard';
-import PostHeader from './PostHeader';
-import PostFeedback from './PostFeedback';
-import PostCard from './PostCard';
+import WelcomeCard from '../components/WelcomeCard';
+import PostHeader from '../components/PostHeader';
+import PostFeedback from '../components/PostFeedback';
+import PostCard from '../components/PostCard';
+import {NavigationSingleton} from './login';
 
 
 export default class Posts extends React.Component {
@@ -51,8 +52,8 @@ export default class Posts extends React.Component {
       <ScrollView>
         <View style={{borderBottomWidth:1, borderTopWidth:1, borderColor:'#E5E7E9'}}>
           <PostHeader  category={'calciomercato'} date={'3 ore fa'} name={'averagejuventinogroups'}/>
-          <PostCard  description={"Giocatore eccezionale lasciato in panchina da quell'allenatore che di calcio capisce poco niente"}/>
-          <View style={{marginTop:-10, padding:10}}>
+          <PostCard  onPress={() => NavigationSingleton.instance.navigate("CompletePostCard")} description={"Giocatore eccezionale lasciato in panchina da quell'allenatore che di calcio capisce poco niente"}/>
+          <View style={{marginTop:20}}>
             <PostFeedback/>
           </View>
         </View>
@@ -60,7 +61,7 @@ export default class Posts extends React.Component {
         <View style={{borderBottomWidth:1, borderTopWidth:1, borderColor:'#E5E7E9'}}>
           <PostHeader  category={'Champions'} date={'12 ore fa'} name={'ChampionsLeague'}/>
           <PostCard  description={"Giocatore eccezionale lasciato in panchina da quell'allenatore che di calcio capisce poco niente"}/>
-          <View style={{marginTop:-10, padding:10}}>
+          <View style={{marginTop:20, }}>
             <PostFeedback/>
           </View>
         </View>

@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-native';
-import MenuBarMember from './MenuBarMember';
-import GroupProfileHeader from './GroupProfileHeader';
-import NotesBar from './NotesBar';
-import CategoryHeader from './CategoryHeader';
-import CategoryDatas from './CategoryDatas';
-import ShareButton from './ShareButton';
-import Entypo from 'react-native-vector-icons/Entypo'
+import MenuBarMember from '../components/MenuBarMember';
+import GroupProfileHeader from '../components/GroupProfileHeader';
+import NotesBar from '../components/NotesBar';
+import CategoryHeader from '../components/CategoryHeader';
+import CategoryDatas from '../components/CategoryDatas';
+import ShareButton from '../components/ShareButton';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather'
-import CarouselGroup from './CarouselGroup';
+import CarouselGroup from '../components/CarouselGroup';
 
 
 export default class MemberView extends React.Component {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
  
 container:{
     flexDirection:'column',
-    margin:5,
+    backgroundColor:'white',
 },
 
 });

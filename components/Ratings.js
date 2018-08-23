@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
 
 
-export default class Members extends React.Component {
+export default class Ratings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            members: this.props.member,           
+            ratings: this.props.ratings,           
         }
     }
 
@@ -15,12 +15,10 @@ export default class Members extends React.Component {
     return (
 
         <View style={styles.container}>
-            <Text style={{fontWeight:'bold', paddingLeft:10}}>
-                {this.state.member}
+            <Text style={{fontWeight:'bold', fontSize:20}}>
+                {this.state.ratings}
             </Text>
-            <TouchableOpacity onPress={() => this.props.onPress()}>
-                <Text>members</Text>
-            </TouchableOpacity>
+            <Text style={{marginLeft:8}}>rating</Text>
         </View>
     );
   }

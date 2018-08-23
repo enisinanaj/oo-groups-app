@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Width,Text, height, View, Image, ScrollView, TextInput,TouchableOpacity, Button} from 'react-native';
-import GroupCard from './GroupCard';
-import OpenGroup from './OpenGroup';
+import GroupCard from '../components/GroupCard';
+import OpenGroup from '../components/OpenGroup';
 import {NavigationSingleton} from './login'
 
 import { StackActions, NavigationActions } from 'react-navigation';

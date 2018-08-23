@@ -9,17 +9,26 @@ import MyProfile from './screens/MyProfile';
 import HomeFeed from './screens/HomeFeed';
 import GroupSuggestions from './screens/GroupSuggestions';
 import AdminView from './screens/AdminView';
-import IconAvatar  from './screens/IconAvatar';
-import NotificationComponent from './screens/NotificationComponent';
+import IconAvatar  from './components/IconAvatar';
+import NotificationComponent from './components/NotificationComponent';
 import ChooseInterests from './screens/ChooseInterests';
 import UsernameSetUp from './screens/UsernameSetUp';
 import Posts from './screens/Posts';
-
+import CompletePostCard from './screens/CompletePostCard';
+import NotificationsScreen from './screens/NotificationsScreen';
+import MemberView from './screens/memberView';
+import ListMembers from './screens/ListMembers'
 
   const HomeStack = StackNavigator(
     {
       Home: {
         screen: HomeFeed,
+      },
+      SinglePost: {
+        screen: CompletePostCard
+      },
+      ListMembers:{
+        screen:ListMembers,
       },
     },
     {
@@ -34,6 +43,12 @@ import Posts from './screens/Posts';
       },
       AdminView:{
         screen: AdminView,
+      },
+      MemberView:{
+        screen: MemberView,
+      },
+      ListMembers:{
+        screen:ListMembers,
       },
     },
     {
@@ -54,13 +69,13 @@ import Posts from './screens/Posts';
   )
   const NotificationsStack = StackNavigator(
     {
-      AdminView:{
-          screen: AdminView,
+      Notifications:{
+          screen: NotificationsScreen,
       },
   
   },
     {
-      initialRouteName: 'AdminView',
+      initialRouteName: 'Notifications',
     }
   
   )
@@ -69,6 +84,9 @@ import Posts from './screens/Posts';
     {
       Posts:{
           screen: Posts,
+      },
+      CompletePostCard:{
+        screen: CompletePostCard
       },
 
     }, 
@@ -141,12 +159,12 @@ import Posts from './screens/Posts';
       inactiveTintColor: 'gray',
       showLabel:false,
     },
-    animationEnabled: true,
+    animationEnabled: false,
     swipeEnabled: false,
   }
 );
 
-//NavigationSingleton.instance.navigate("ProtectedViews");
+//NavigationSingleton.instance.navigate("");
 
 export default StackNavigator({
   UnprotectedViews:{

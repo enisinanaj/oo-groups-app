@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
 import { StyleSheet, Width,Text, height, View, Image, Button, ScrollView, TouchableOpacity} from 'react-native';
-import GroupProfilePicture from './GroupProfilePicture';
+import GroupProfilePicture from '../components/GroupProfilePicture';
 import Entypo from 'react-native-vector-icons/Entypo'
-import MenuBarMember from './MenuBarMember';
-import GroupProfileHeader from './GroupProfileHeader';
-import NotesBar from './NotesBar';
-import CategoryHeader from './CategoryHeader';
-import CategoryDatas from './CategoryDatas';
-import ShareButton from './ShareButton';
-import CarouselGroup from './CarouselGroup';
-import AdminOptionsBar from './AdminOptionsBar';
-import ContactAdmin from './ContactAdmin';
+import MenuBarMember from '../components/MenuBarMember';
+import GroupProfileHeader from '../components/GroupProfileHeader';
+import NotesBar from '../components/NotesBar';
+import CategoryHeader from '../components/CategoryHeader';
+import CategoryDatas from '../components/CategoryDatas';
+import ShareButton from '../components/ShareButton';
+import CarouselGroup from '../components/CarouselGroup';
+import AdminOptionsBar from '../components/AdminOptionsBar';
+import ContactAdmin from '../components/ContactAdmin';
+import AddNote from '../components/AddNote';
 
 
 export default class AdminView extends React.Component {
@@ -39,7 +40,7 @@ export default class AdminView extends React.Component {
            <View style={{marginTop:-10}}>
                 <MenuBarMember />
             </View>
-            <NotesBar/>
+            <AddNote/>
             <CarouselGroup/>
             <ShareButton/>
             <View >

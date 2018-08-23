@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Width,Text, height, View, Image, TouchableOpacity, Button} from 'react-native';
 import { createStackNavigator, props, navigate, navigation } from 'react-navigation';
-import SimpleButton from './SimpleButton';
-import MediumSimpleButton from './MediumSimpleButton';
+import SimpleButton from '../components/SimpleButton';
+import MediumSimpleButton from '../components/MediumSimpleButton';
 
 
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Width,Text, height, View, Image, ScrollView, TextInput,TouchableOpacity, Button} from 'react-native';
-import InteresCard from './interestCard';
+import InteresCard from '../components/interestCard';
 
 
 
