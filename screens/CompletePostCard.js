@@ -25,8 +25,8 @@ export default class CompletePostCard extends React.Component {
     return (
     <ScrollView style={styles.container}>
       <View style={{borderBottomWidth:1, borderTopWidth:1, borderColor:'#E5E7E9'}}>
-        <PostHeader  category={'calciomercato'} date={'3 ore fa'} name={'averagejuventinogroups'}/>
-        <PostCard  description={"Giocatore eccezionale lasciato in panchina da quell'allenatore che di calcio capisce poco niente"}/>
+        <PostHeader  image={require('../images/user.jpg')} category={'calciomercato'} date={'3 ore fa'} name={'averagejuventinogroups'}/>
+        <PostCard  postImage={require('../images/poppyflower.jpeg')} escription={"Giocatore eccezionale lasciato in panchina da quell'allenatore che di calcio capisce poco niente"}/>
         <View style={{ margin:10}}>
           <SinglePostFeedback/>
         </View>

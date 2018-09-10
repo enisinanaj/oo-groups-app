@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView,Text,View,} from 'react-native';
+import { StyleSheet, ScrollView,} from 'react-native';
 import NotificationCard from '../components/NotificationCard';
 import SubscribedCard from '../components/SubscribedCard';
+
 
 
 
@@ -17,18 +18,15 @@ export default class NotificationsScreen extends React.Component {
     }
 
 
+
   render() {
     return (
 
         <ScrollView style={styles.container}>
-                <TouchableOpacity style={{ padding:10,backgroundColor:'white', alignItems:'center', flexDirection:'row',borderBottomWidth:1,borderColor:'#E5E8E8',}}>
-                    <Text style={{fontSize:13,}}>You have</Text>
-                    <Text style={{fontSize:13, fontWeight:'bold'}}> 25 new member requests</Text>
-                </TouchableOpacity>
-            <NotificationCard  user ={'Leandrolombardo'} activityType={'commented on'}/>
-            <NotificationCard  user ={'LoremIpsum'} activityType={'liked '}/>
-            <NotificationCard  user ={'Juventino'} activityType={'disliked '}/>
-            <SubscribedCard user ={'Juventino'}/>
+            <NotificationCard  postImage={require('../images/tree.jpeg')} smallprofilepicture={require('../images/user.jpg')} user ={'Leandrolombardo'} activityType={'commented on'}/>
+            <NotificationCard  postImage={require('../images/streetfood.jpeg')} smallprofilepicture={require('../images/profilepicturegirl.jpeg')} user ={'LoremIpsum'} activityType={'liked '}/>
+            <NotificationCard  postImage={require('../images/poppyflower.jpeg')} smallprofilepicture={require('../images/profilepicture.jpeg')} user ={'Juventino'} activityType={'disliked '}/>
+            <SubscribedCard smallprofilepicure={require('../images/user.jpg')} user ={'Juventino'}/> 
         </ScrollView>
     );
   }

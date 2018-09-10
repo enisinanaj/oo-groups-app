@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import Entypo from 'react-native-vector-icons/Entypo';
+import {NavigationSingleton} from '../screens/login';
 import NotificationIcon from './NotificationIcon';
+
 
 
 export default class AdminOptionsBar extends React.Component {
@@ -21,7 +21,7 @@ export default class AdminOptionsBar extends React.Component {
 
         <View style={styles.container}>
             <View style={{flexDirection:'row', justifyContent:'space-between', marginBottom:10}}>
-                <TouchableOpacity style={{flexDirection:'row'}}>
+                <TouchableOpacity onPress={() => NavigationSingleton.instance.navigate('PostRequests')} style={{flexDirection:'row'}}>
                     <FontAwesome style={{marginRight:7}} name={'file-text-o'} size={30} color={'black'}/>
                     <Text style={{fontSize:18, marginTop:5, marginRight:10}}>Post request</Text>
                         <View style={{position:'absolute', marginLeft:15, marginTop:-5}}>
@@ -29,7 +29,7 @@ export default class AdminOptionsBar extends React.Component {
                         </View>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={{flexDirection:'row'}}>
+                <TouchableOpacity onPress={() => NavigationSingleton.instance.navigate('SubscribeRequests')} style={{flexDirection:'row'}}>
                     <FontAwesome style={{marginRight:7}} name={'user-circle-o'} size={35} color={'black'}/>
                     <Text style={{fontSize:18, marginTop:5, marginRight:10}}>Entry request</Text>
                         <View style={{position:'absolute', marginLeft:20, marginTop:-5}}>
@@ -43,7 +43,7 @@ export default class AdminOptionsBar extends React.Component {
                     <Feather style={{marginRight:7}} name={'alert-circle'} size={30} color={'black'}/>
                     <Text style={{fontSize:18, marginTop:5, marginRight:10}}>Reports</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{flexDirection:'row',}}>
+                <TouchableOpacity onPress={() => NavigationSingleton.instance.navigate("SettingsGroups")} style={{flexDirection:'row',}}>
                     <Feather style={{marginRight:7}} name={'settings'} size={30} color={'black'}/>
                     <Text style={{fontSize:18, marginTop:5, marginRight:10}}>Settings</Text>
                 </TouchableOpacity>

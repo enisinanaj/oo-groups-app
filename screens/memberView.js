@@ -9,6 +9,8 @@ import ShareButton from '../components/ShareButton';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather'
 import CarouselGroup from '../components/CarouselGroup';
+import {NavigationSingleton} from '../screens/login';
+import Colors from '../constants/Colors';
 
 
 export default class MemberView extends React.Component {
@@ -20,9 +22,10 @@ export default class MemberView extends React.Component {
                 <Entypo name={'dots-three-vertical'} size={20}/>
             </TouchableOpacity>
           ),
-          headerLeft:<TouchableOpacity style={{marginLeft:10}}onPress={() => { this.props.navigation.goBack() }}><Feather name={'arrow-left'} size={20}/></TouchableOpacity>
+          headerLeft:<TouchableOpacity style={{marginLeft:10}}onPress={() => { NavigationSingleton.instance.goBack() }}><Feather name={'arrow-left'} size={20}/></TouchableOpacity>
         };
     };
+    
     constructor(props) {
         super(props);
         
@@ -33,7 +36,7 @@ export default class MemberView extends React.Component {
     return (
 
         <ScrollView style={styles.container}>
-           <GroupProfileHeader />
+           <GroupProfileHeader groupProfilePicture={require('../images/soccercup.jpeg')}/>
            <View style={{marginTop:-20}}>
                 <MenuBarMember />
             </View>
@@ -42,7 +45,7 @@ export default class MemberView extends React.Component {
             <ShareButton/>
             <View >
                 <CategoryHeader/>
-                <CategoryDatas categoryTitle={'Memes'} yourVote={10} generalRating={'9,7'}/>
+                <CategoryDatas onPress={() => NavigationSingleton.instance.navigate("Posts")} categoryTitle={'Memes'} yourVote={10} generalRating={'9,7'}/>
                 <CategoryDatas categoryTitle={'Calciomercato'} yourVote={10} generalRating={'9,1'}/>
                 <CategoryDatas categoryTitle={'Champions'} yourVote={10} generalRating={'9,5'}/>
                 <CategoryDatas categoryTitle={'WorldCup'} yourVote={10} generalRating={'9,9'}/>
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
  
 container:{
     flexDirection:'column',
-    backgroundColor:'white',
+    backgroundColor:Colors.backgroundColor,
 },
 
 });

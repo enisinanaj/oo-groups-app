@@ -14,7 +14,7 @@ export default class GroupProfilePicture extends React.Component {
         <View style={styles.container}>
             <Image
                 style={{width:100, height:100, margin: 2,borderRadius:50}}
-                source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvAY9qT1yDcDUsmui17nxZepUbRNF64rEFPSjjdJpskW4cx4iA-Q'}}
+                source={this.props.groupProfilePicture}
             />
         </View>
     );

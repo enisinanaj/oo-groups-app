@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Width,Text, Modal, TouchableHighlight,height, View, Image, TouchableOpacity, Button} from 'react-native';
-import MediumSimpleButton from './MediumSimpleButton';
+import { StyleSheet, Text, Modal, TouchableHighlight, View, ScrollView,TouchableOpacity, TextInput,Image} from 'react-native';
 import CameraRollPicker from 'react-native-camera-roll-picker';
+import CategoryPicker from './CategoryPicker';
+import Colors from '../constants/Colors';
+
 
 
 export default class SimpleButton extends React.Component {
@@ -12,19 +14,25 @@ export default class SimpleButton extends React.Component {
             title: this.props.title,
             modalVisible: false,
             mediaModalVisibe:false,
-            selected:'',
+            selected: [],
             num:0,
-            image:'Media'
+            image:'',
+            selectedCategory:'Default',
+            text:'',
+            checkedPrivate: true,
         }
     }
+
 
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
     }
+
     
     setMediaModalVisible(visible){
         this.setState({mediaModalVisibe: visible})
     }
+
     
     getSelectedImages(image, current) {
         var num = image.length;
@@ -37,8 +45,8 @@ export default class SimpleButton extends React.Component {
 
     renderSaveButton(){
         return(
-            <TouchableOpacity onPress={() => this.newImage()} style={{backgroundColor:'black', height:50}}>
-                <Text style={{color:'tomato', fontSize:18, marginLeft:30, marginTop:10}}>Save selected image </Text>
+            <TouchableOpacity onPress={() => this.newImage()} style={{backgroundColor:'white', height:50}}>
+                <Text style={{color:Colors.alert, fontSize:18, marginLeft:30, marginTop:10}}>Save selected image </Text>
             </TouchableOpacity>
         )
     }
@@ -53,21 +61,21 @@ export default class SimpleButton extends React.Component {
     renderImageSelectedModal() {
         return (
             <Modal
-                animationType="slide"
+                animationType="none"
                 transparent={false}
                 visible={this.state.mediaModalVisibe}
                 onRequestClose={() => {
                     alert('Modal has been closed.');
                 }}>
-                <TouchableHighlight style={{height:50,backgroundColor:'black'}} onPress={() => {this.setState({mediaModalVisibe:false})}}>
-                    <Text style={{color:'blue', backgroundColor:'black', fontSize:20, marginLeft:20, marginTop:20, marginBottom:10}}> Cancel </Text>
+                <TouchableHighlight style={{height:50,backgroundColor:'white'}} onPress={() => {this.setState({mediaModalVisibe:false})}}>
+                    <Text style={{color: Colors.main, backgroundColor:'white', fontSize:20, marginLeft:20, marginTop:20, marginBottom:10}}> Cancel </Text>
                 </TouchableHighlight>
                 
                 <CameraRollPicker
                     callback={this.getSelectedImages.bind(this)}
                     selectSingleItem={true}
                     imageMargin={2}
-                    backgroundColor={'black'}
+                    backgroundColor={'white'}
                 />
 
                 {this.state.num != 0? this.renderSaveButton(): null}
@@ -75,17 +83,18 @@ export default class SimpleButton extends React.Component {
         )
     }
 
+
     render() {
         return (
             <View>
                 <TouchableOpacity onPress={() => {this.setModalVisible(!this.state.modalVisible);}}>
                     <View style={styles.simpleButton}>
-                        <Text style={styles.buttonText}> {this.state.title}</Text>
+                        <Text style={styles.buttonText}>{this.state.title}</Text>
                     </View>
                 </TouchableOpacity>
 
                 <Modal
-                    animationType="slide"
+                    animationType="none"
                     transparent={false}
                     visible={this.state.modalVisible}
                     onRequestClose={() => {
@@ -97,21 +106,31 @@ export default class SimpleButton extends React.Component {
                                 onPress={() => {
                                     this.setModalVisible(!this.state.modalVisible);
                                 }}>
-                                <Text style={{fontSize:20, color:'blue', marginTop:10, marginLeft:10}}>Cancel</Text>
+                                <Text style={{fontSize:20, color: Colors.main, marginTop:10, marginLeft:10}}>Cancel</Text>
                             </TouchableOpacity>
 
-                            <View style={{padding:10, alignItems:'center',borderBottomWidth:1, borderBottomColor:'#E5E8E8',}}>
+                            <View style={{padding:10, alignItems:'center',borderBottomWidth:1, borderBottomColor: Colors.lightBorder,}}>
                                 <Text style={{fontSize:18, fontWeight:'bold'}}>Condividi con averagejuventinoguy</Text>
                             </View>
                         </View>
-                        <View style={{alignItems:'center', paddingTop:20, paddingBottom:20,borderBottomWidth:1, borderBottomColor:'#E5E8E8',}}>
-                            <MediumSimpleButton title={'Seleziona categoria'} />
-                            
+                        <View style={{alignItems:'center', paddingTop:20, paddingBottom:20,borderBottomWidth:1, borderBottomColor: Colors.profileBorder,}}>
+                            <CategoryPicker title={'Seleziona categoria'} />
                         </View>
-                        <View style={{height:270}}>
-                            <Text style={{fontSize:20, marginTop:15, marginLeft:15}}>Cosa vuoi condividere?</Text>
+
+                        <View style={{color:'transparent',marginLeft:10, flexDirection: 'column'}}>
+                                <TextInput 
+                                    style={{fontSize:15, height:40, marginTop:10, backgroundColor:'white', marginRight:10, paddingLeft:10}}
+                                    onChangeText={(text) => this.setState({text})}
+                                    value={this.state.text}
+                                    multiline={'true'}
+                                    placeholder={'Cosa vuoi condividere?'}
+                                />
+                            <Image style={{height: 190, marginTop:10, marginLeft:3, width:350}}
+                                source={this.state.selected}>
+                            </Image>
                         </View>
-                        <View style={{alignSelf:'center', alignItems:'center'}}>
+
+                        <View style={{alignSelf:'center', alignItems:'center', marginTop:10}}>
                             <Text style={{color:'gray'}}>Allega</Text>
 
                             <TouchableOpacity style={styles.options} onPress={() => {this.setMediaModalVisible(!this.state.mediaModalVisibe)}}>
@@ -125,8 +144,8 @@ export default class SimpleButton extends React.Component {
                             <TouchableOpacity style={styles.options}>
                                 <Text style={styles.optionsText}>Sondaggio</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.redSimpleButton}>
-                                <Text style={{color:'red', fontSize:22,}}>Condividi</Text>
+                            <TouchableOpacity style={styles.shareButton}>
+                                <Text style={{color: Colors.main, fontSize:22,}}>Condividi</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -154,25 +173,31 @@ simpleButton:{
     alignItems:'center',
     width:270,
     height:40,
-    borderColor:'#ABB2B9',
+    borderColor: Colors.profileBorder,
     borderWidth:1,
     borderRadius:5,
     justifyContent:'center',
+    
 },
 buttonText: {
     fontSize:17,
 },
-redSimpleButton:{
-    backgroundColor:'transparent',
+shareButton:{
+    backgroundColor:'white',
     flexDirection:'row',
     alignItems:'center',
-    width:270,
+    width:250,
     height:40,
-    borderColor:'red',
+    borderColor: Colors.lightBorder,
     borderWidth:1,
     borderRadius:5,
     justifyContent:'center',
-    marginTop:20
+    marginTop:20,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 1,
+    shadowColor:'#ABB2B9',
 },
 options:{
     marginTop:10,

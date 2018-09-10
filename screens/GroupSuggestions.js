@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Width,Text, height, View, Image, ScrollView, TextInput,TouchableOpacity, Button} from 'react-native';
-import GroupCard from '../components/GroupCard';
+import {Platform, StyleSheet, Text, View, ScrollView, TouchableOpacity,} from 'react-native';
 import OpenGroup from '../components/OpenGroup';
 import {NavigationSingleton} from './login'
-
-import { StackActions, NavigationActions } from 'react-navigation';
+import Colors from '../constants/Colors';
 
 
 export default class GroupSuggestion extends React.Component {
@@ -16,14 +14,53 @@ export default class GroupSuggestion extends React.Component {
         super(props);
     
         this.state = { 
-            
+            groups: []
         }
+
+        /*
+         groups: [{
+            name: "....",
+            admin: "...."
+        }, {
+            name: "...",
+            admin: "..."
+        }]
+        */
+    }
+
+    componentDidMount() {
+        // call URL and get response from server
+        fetch("http://localhost:1337/gruppo")
+        
+        // get only the BODY part from response
+        .then(
+            (response) => {
+                return response.json();
+        })
+
+        // set response object to component State
+        .then((responseJson) => {
+            this.setState({groups: responseJson})
+        })
+
+        // catch eventual errors.
+        .catch(e => {
+            console.error(e);
+        })
     }
 
     goToProtectedViews() {
         NavigationSingleton.instance.navigate("ProtectedViews");
     }
 
+
+    renderGroups() {
+        return (
+            this.state.groups.map( (el, i) => {
+                return <OpenGroup key={i} name={el.nome} />
+            })
+        );
+    }
 
   render() {
     
@@ -34,9 +71,11 @@ export default class GroupSuggestion extends React.Component {
         </View>
         <ScrollView style={styles.container}>
       
-            <GroupCard />
+            {/* <GroupCard />
             <OpenGroup name={'RockandRoll'}/>
-            <GroupCard/>
+            <GroupCard/> */}
+
+            {this.renderGroups()}
 
         </ScrollView>
         <Text style={{marginHorizontal:25, paddingTop:10,fontSize:14}}> Potrai trovare i gruppi anche successivamente nella sezione ricerca</Text>
@@ -63,7 +102,7 @@ const styles = StyleSheet.create({
         fontSize:20, 
         marginTop: 10, 
         fontWeight:'bold', 
-        color:'#2E86C1'
+        color:Colors.main
     },
 
 })

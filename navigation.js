@@ -18,6 +18,14 @@ import CompletePostCard from './screens/CompletePostCard';
 import NotificationsScreen from './screens/NotificationsScreen';
 import MemberView from './screens/memberView';
 import ListMembers from './screens/ListMembers'
+import Settings from './screens/Settings';
+import MyGroups from './screens/MyGroups';
+import Gallery from './screens/Gallery';
+import SubscribeRequests from './screens/SubscribeRequests';
+import SettingsGroups from './screens/SettingsGroups';
+import PostRequests from './screens/PostRequests';
+
+
 
   const HomeStack = StackNavigator(
     {
@@ -30,6 +38,13 @@ import ListMembers from './screens/ListMembers'
       ListMembers:{
         screen:ListMembers,
       },
+      MemberView:{
+        screen: MemberView,
+      },
+      Gallery:{
+        screen: Gallery
+      },
+      
     },
     {
       initialRouteName: 'Home',
@@ -44,11 +59,20 @@ import ListMembers from './screens/ListMembers'
       AdminView:{
         screen: AdminView,
       },
-      MemberView:{
-        screen: MemberView,
-      },
       ListMembers:{
         screen:ListMembers,
+      },
+      Settings:{
+        screen: Settings
+      },
+      SettingsGroups:{
+        screen: SettingsGroups
+      },
+      SubscribeRequests:{
+        screen: SubscribeRequests
+      },
+      PostRequests:{
+        screen: PostRequests
       },
     },
     {
@@ -57,13 +81,12 @@ import ListMembers from './screens/ListMembers'
   );
   const GroupsStack = StackNavigator(
     {
-    GroupSuggestions:{
-        screen: GroupSuggestions,
+    MyGroups:{
+        screen: MyGroups,
     },
-  
   },
     {
-      initialRouteName: 'GroupSuggestions',
+      initialRouteName: 'MyGroups',
     }
   
   )
@@ -72,7 +95,6 @@ import ListMembers from './screens/ListMembers'
       Notifications:{
           screen: NotificationsScreen,
       },
-  
   },
     {
       initialRouteName: 'Notifications',
@@ -97,8 +119,11 @@ import ListMembers from './screens/ListMembers'
 
   const LoginStack = StackNavigator(
     {
-      Login: {
-          screen: Login,
+      //Login: {
+        //  screen: Login,
+      //},
+      Login:{
+        screen: Login,
       },
       UsernameSetUp: {
         screen: UsernameSetUp,
@@ -143,7 +168,7 @@ import ListMembers from './screens/ListMembers'
             return <NotificationComponent/>;
           }
           else if (routeName === 'Profile') {
-            return <IconAvatar/>;
+            return <IconAvatar smallAvatar={require('./images/profilepicture.jpeg')}/>;
 
           }
 

@@ -57,7 +57,7 @@ export default class SinglePostFeedback extends React.Component {
             <CommentData datas={'2.3k'}/>
             <CommentData datas={'500'}/>
             <View style={{marginLeft:-10}}>
-                <PostAdmin />
+                <PostAdmin postAdminName={'Mario Rossi'} postAdminAvatar={require('../images/user.jpg')} />
             </View>
         </View>
         <View style={{flexDirection:'row', marginLeft:10, marginTop:-20}}>

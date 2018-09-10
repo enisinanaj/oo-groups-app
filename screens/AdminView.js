@@ -35,7 +35,7 @@ export default class AdminView extends React.Component {
     return (
 
         <ScrollView style={styles.container}>
-           <ContactAdmin/>
+           <ContactAdmin groupProfilePicture={require('../images/profilepicture.jpeg')}/>
            <AdminOptionsBar/>
            <View style={{marginTop:-10}}>
                 <MenuBarMember />
@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
  
 container:{
     flexDirection:'column',
-    margin:5,
+    padding:5,
+    backgroundColor:'white',
 },
 
 });

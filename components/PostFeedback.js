@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, TextInput, TouchableOpacity} from 'react-native';
-import Entypo from 'react-native-vector-icons/Entypo';
-import Feather from 'react-native-vector-icons/Feather';
+import { StyleSheet,Text, View, TextInput, TouchableOpacity} from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import CommentData from './CommentData';
 import PostAdmin from './PostAdmin';
 import LikeButton from './LikeButton';
 import DislikeButton from './DislikeButton';
-import CommentButton from './commentButton';
+import Colors from '../constants/Colors';
 
 
 
@@ -28,7 +26,7 @@ export default class PostFeedback extends React.Component {
     
     renderCommentInput(){
         return(
-            <View style={{backgroundColor:'transparent',flexDirection:'row', flex:1}}>
+            <View style={{backgroundColor:'transparent',flexDirection:'row', flex:1, marginRight:15}}>
                 <TextInput
                     value={this.state.comment}
                     onChangeText={(newText) => this.setState({comment:newText})}
@@ -40,7 +38,7 @@ export default class PostFeedback extends React.Component {
                 />
                 <View style={{alignItems:'center'}}>
                     <TouchableOpacity disabled={this.state.message !=''? false: true}>
-                        <Text style={this.state.comment!=''? {color:'#3498DB', marginTop:20,fontSize:20} : {color:'gray', marginTop:20,fontSize:20}}>Send</Text>
+                        <Text style={this.state.comment!=''? {color:Colors.main, marginTop:20,fontSize:20} : {color:Colors.inactive, marginTop:20,fontSize:20}}>Send</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -80,8 +78,8 @@ export default class PostFeedback extends React.Component {
         <View style={{flexDirection:'row', marginTop:-30}}>
             <CommentData datas={'2.3k'}/>
             <CommentData datas={'500'}/>
-            <View style={{marginLeft:-10}}>
-                <PostAdmin />
+            <View style={{alignItems: 'flex-end'}}>
+                <PostAdmin postAdminAvatar={this.props.postAdminAvatar} postAdminName={this.props.postAdminName} />
             </View>
         </View>
         <View style={{flexDirection:'row', marginLeft:10, marginTop:-20}}>

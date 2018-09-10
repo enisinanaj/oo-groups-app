@@ -17,7 +17,7 @@ export default class GroupProfileHeader extends React.Component {
     return (
 
         <View style={styles.container}>
-           <GroupProfilePicture />
+           <GroupProfilePicture groupProfilePicture={this.props.groupProfilePicture}/>
            <View style={{flexDirection:'column', marginTop:10}}>
                 <View style={{flexDirection:'row'}}>
                     <Members onPress={() => NavigationSingleton.instance.navigate("ListMembers")} members={'9,7k'}/>

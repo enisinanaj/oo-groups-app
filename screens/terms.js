@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Width,Text, height, ScrollView, View, TouchableOpacity, Button} from 'react-native';
+import {StyleSheet,Text, ScrollView, View, TouchableOpacity} from 'react-native';
 import { CheckBox } from 'react-native-elements';
+import Colors from '../constants/Colors';
 
 export default class Terms extends React.Component {
     static navigationOptions = {
@@ -37,7 +38,7 @@ export default class Terms extends React.Component {
                 onIconPress={() => this.hideShowCheck()}
                 checked={!this.state.checked}
                 center
-                checkedColor={'black'}
+                checkedColor={Colors.main}
                 checked={this.state.checked}
                 containerStyle={{width:43, marginLeft:5, backgroundColor:'transparent', borderColor:'transparent'}}
             />
@@ -62,13 +63,13 @@ const styles = StyleSheet.create({
         fontSize:25, 
         alignSelf:'flex-end', 
         margin:10, 
-        color:'black'
+        color:Colors.inactive,
     },
     enabled:{
         fontSize:25, 
         alignSelf:'flex-end', 
         margin:10, 
-        color:'blue'
+        color:Colors.main,
     },
 
     title:{

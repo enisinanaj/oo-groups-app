@@ -26,7 +26,7 @@ export default class ProfileContacts extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity style={{flexDirection:'row', borderColor:'#ABB2B9', borderRadius:5, width:170, padding:5, paddingLeft:10, borderWidth:1,}}>
                     <FontAwesome style={{marginRight:20,}} name={'linkedin'} size={25} color={'black'}/>
-                    <Text style={{fontSize:18, alignSelf:'center',marginTop:2, marginRight:10}}>Facebook</Text>
+                    <Text style={{fontSize:18, alignSelf:'center',marginTop:2, marginRight:10}}>Linkedin</Text>
                 </TouchableOpacity>
             </View>
             <TouchableOpacity style={{flexDirection:'row', borderColor:'#ABB2B9',borderRadius:5, width:170, padding:5, alignSelf:'center',paddingLeft:10, borderWidth:1,}}>

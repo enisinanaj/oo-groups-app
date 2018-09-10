@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
+import { StyleSheet,Text, View, TouchableOpacity} from 'react-native';
+import Colors from '../constants/Colors';
 
 
 
@@ -18,7 +19,9 @@ export default class CategoryDatas extends React.Component {
     return (
 
         <View style={styles.container}>
-            <Text style={{fontSize:18, fontWeight:'bold',marginTop:5, marginRight:10}}>{this.state.categoryTitle}</Text>
+            <TouchableOpacity onPress={() => this.props.onPress()}>
+                <Text style={{fontSize:18, fontWeight:'bold',marginTop:5, marginRight:10}}>{this.state.categoryTitle}</Text>
+            </TouchableOpacity>
             <View style={{flexDirection:'row', marginTop:3}}>
                 <Text style={{fontSize:15, marginRight:50,}}>{this.state.yourVote}</Text>
             
@@ -38,9 +41,9 @@ const styles = StyleSheet.create({
 container:{
     flexDirection:'row',
     borderBottomWidth:1,
-    borderColor:'#CCD1D1',
+    borderColor:Colors.profileBorder,
     padding:10,
-    backgroundColor:'#EBEDEF',
+    backgroundColor:'white',
     justifyContent:'space-between',
 },
 

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { StyleSheet, Width,Text, height, View, Image,TextInput,Modal,  TouchableOpacity} from 'react-native';
 import CameraRollPicker from 'react-native-camera-roll-picker';
+import Colors from '../constants/Colors';
 
 
 export default class AddNote extends React.Component {
@@ -38,8 +39,8 @@ export default class AddNote extends React.Component {
 
     renderSaveButton(){
         return(
-            <TouchableOpacity onPress={() => this.newImage()} style={{backgroundColor:'black', height:50}}>
-                <Text style={{color:'tomato', fontSize:18, marginLeft:30, marginTop:10}}>Save selected image </Text>
+            <TouchableOpacity onPress={() => this.newImage()} style={{backgroundColor: Colors.backgroundColor, height:50}}>
+                <Text style={{color: Colors.alert, fontSize:18, marginLeft:30, marginTop:10}}>Save selected image </Text>
             </TouchableOpacity>
         )
     }
@@ -62,15 +63,15 @@ export default class AddNote extends React.Component {
                 onRequestClose={() => {
                     alert('Modal has been closed.');
                 }}>
-                <TouchableOpacity style={{height:50,backgroundColor:'black'}} onPress={() => {this.setState({mediaModalVisibe:false})}}>
-                    <Text style={{color:'blue', backgroundColor:'black', fontSize:20, marginLeft:20, marginTop:20, marginBottom:10}}> Cancel </Text>
+                <TouchableOpacity style={{height:50,backgroundColor: Colors.backgroundColor}} onPress={() => {this.setState({mediaModalVisibe:false})}}>
+                    <Text style={{color: Colors.main, backgroundColor: Colors.backgroundColor, fontSize:20, marginLeft:20, marginTop:20, marginBottom:10}}> Cancel </Text>
                 </TouchableOpacity>
                 
                 <CameraRollPicker
                     callback={this.getSelectedImages.bind(this)}
                     selectSingleItem={true}
                     imageMargin={2}
-                    backgroundColor={'black'}
+                    backgroundColor={ Colors.backgroundColor}
                 />
 
                 {this.state.num != 0? this.renderSaveButton(): null}
@@ -100,10 +101,10 @@ export default class AddNote extends React.Component {
                             onPress={() => {
                             this.setModalVisible(!this.state.modalVisible);
                         }}>
-                            <Text style={{fontSize:18, color:'#85C1E9', marginTop:22, marginLeft:10}}>Cancel</Text>
+                            <Text style={{fontSize:18, color: Colors.main, marginTop:22, marginLeft:10}}>Cancel</Text>
                         </TouchableOpacity>
 
-                        <View style={{alignItems:'center', flexDirection:'column',marginTop:150,backgroundColor:'white'}}>
+                        <View style={{alignItems:'center', flexDirection:'column',marginTop:150, backgroundColor: Colors.backgroundColor}}>
                             <View>
                                 <TextInput
                                     placeholder={'Title'}
@@ -130,13 +131,13 @@ export default class AddNote extends React.Component {
                                     style={this.state.focusedDescription ? styles.focusedInput: styles.singleInput}>
                                 </TextInput>
                             </View>
-                            <TouchableOpacity style={{borderWidth:1, borderColor:'#85C1E9', borderRadius:10, height:40, marginTop:20, width:100, alignSelf:'center'}} onPress={() => {this.setMediaModalVisible(!this.state.mediaModalVisibe)}}>
+                            <TouchableOpacity style={{borderWidth:1, borderColor: Colors.profileBorder, borderRadius:10, height:40, marginTop:20, width:100, alignSelf:'center'}} onPress={() => {this.setMediaModalVisible(!this.state.mediaModalVisibe)}}>
                                 <Text style={{alignSelf:'center', marginTop:10}}>{this.state.selected==''? 'Select image': 'Selected'}</Text>
                                 {this.renderImageSelectedModal()} 
                             </TouchableOpacity>
                             <View style={{marginTop:40}}>
                                 <TouchableOpacity disabled={this.isFormCompleted()? false: true} onPress= {() => this.saveNewNote()}>
-                                    <Text style={this.isFormCompleted()? {color:'tomato', fontSize:20} : {color:'grey', fontSize:20}}>Save</Text>
+                                    <Text style={this.isFormCompleted()? {color: Colors.alert, fontSize:20} : {color: Colors.inactive, fontSize:20}}>Save</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

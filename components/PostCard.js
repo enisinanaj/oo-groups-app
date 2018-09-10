@@ -38,12 +38,12 @@ export default class PostCard extends React.Component {
     return (
 
         <View style={{paddingLeft:20, paddingRight:20,}}>
-            <Text style={{fontSize:17}}>{this.state.description}
+            <Text style={{fontSize:15}}>{this.state.description}
             </Text>
             <TouchableOpacity onPress={() => this.props.onPress()}>
               <Image
                   style={{width:340, marginTop:10, height:190,}}
-                  source={{uri: 'https://lagiornatasportiva.it/wp-content/uploads/2018/02/cristiano-ronaldo-net-worth.jpg'}}
+                  source={this.props.postImage}
               />
             </TouchableOpacity>
         </View>    

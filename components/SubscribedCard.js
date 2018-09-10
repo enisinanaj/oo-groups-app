@@ -17,8 +17,7 @@ export default class SubscribedCard extends React.Component {
             <View style={{flexDirection:'row', flex:0.8}}>
                 <Image
                     style={{width:30, height:30,borderRadius:15, margin:3, marginRigh:5}}
-                    source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvAY9qT1yDcDUsmui17nxZepUbRNF64rEFPSjjdJpskW4cx4iA-Q'}}
-                />
+                    source={this.props.smallprofilepicure}/>
                 <TouchableOpacity>
                     <Text style={{fontWeight:'bold', fontSize: 12,marginTop:10, marginRight:3,}}>{this.props.user}</Text>
                 </TouchableOpacity>

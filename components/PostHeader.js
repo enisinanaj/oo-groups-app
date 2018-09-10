@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity, Modal} from 'react-native';
-
 import Entypo from 'react-native-vector-icons/Entypo';
 import PostOptionsAdmin from './PostOptionsAdmin';
 
@@ -29,7 +28,7 @@ export default class PostHeader extends React.Component {
     <View style={styles.container}>
         <Image
             style={{width:55, height:55, margin: 10,borderRadius:28}}
-            source={{uri:'https://lagiornatasportiva.it/wp-content/uploads/2018/02/cristiano-ronaldo-net-worth.jpg'}}   />
+            source={this.props.image}   />
         <View>
             <View style={{flexDirection:'row', justifyContent:'space-between', width:285}}>
                 <TouchableOpacity onPress={() => this.props.onPress()}>

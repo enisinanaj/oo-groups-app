@@ -13,7 +13,7 @@ render(){
         <View style={{flexDirection:'row'}}>
             <Image
                 style={styles.image}
-                source={{uri:'https://cdn.images.express.co.uk/img/dynamic/67/590x/Lionel-Messi-975313.jpg?r=1529221257744'}}
+                source={this.props.smallAvatar}
             />
             <Text style={styles.title}>{this.state.name}</Text>
         </View>

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Width,Text, height, View, Image, ScrollView, TextInput,TouchableOpacity, Button} from 'react-native';
+import {StyleSheet, Text, View, ScrollView,TouchableOpacity,} from 'react-native';
 import InteresCard from '../components/interestCard';
+import Colors from '../constants/Colors';
 
 
 
@@ -92,6 +93,6 @@ const styles = StyleSheet.create({
         fontSize:25, 
         marginTop: 10, 
         fontWeight:'bold', 
-        color:'#2E86C1'
+        color:Colors.main
     },
 })

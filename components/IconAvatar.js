@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
-import NotificationIcon from './NotificationIcon';
+import { StyleSheet, View, Image,} from 'react-native';
+
 
 export default class IconAvatar extends React.Component {
     constructor(props) {
@@ -14,7 +14,7 @@ render(){
         <View style={{flexDirection:'row'}}>
             <Image
                 style={styles.image}
-                source={{uri:'https://cdn.images.express.co.uk/img/dynamic/67/590x/Lionel-Messi-975313.jpg?r=1529221257744'}}
+                source={this.props.smallAvatar}
             />
             
         </View>

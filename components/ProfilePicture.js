@@ -12,10 +12,7 @@ export default class ProfilePicture extends React.Component {
     return (
 
         <View style={styles.container}>
-            <Image
-                style={{width:170, height:170,borderRadius:85}}
-                source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmwLH-qUmZDNh0NLqNhFatyGHuKFwnpe_palgWRewaAg8UHIXT'}}
-            />
+            <Image style={{width:150, height:150,borderRadius:75}} source={this.props.image}/>
         </View>
     );
   }

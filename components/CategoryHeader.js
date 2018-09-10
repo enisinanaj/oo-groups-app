@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import Entypo from 'react-native-vector-icons/Entypo';
+import { StyleSheet,Text, View} from 'react-native';
+import Colors from '../constants/Colors';
 
 
 export default class CategoryHeader extends React.Component {
@@ -39,7 +36,7 @@ const styles = StyleSheet.create({
 container:{
     flexDirection:'row',
     borderBottomWidth:1,
-    borderColor:'#CCD1D1',
+    borderColor:Colors.profileBorder,
     padding:10,
     justifyContent:'space-between',
 },

@@ -87,8 +87,7 @@ export default class OpenGroup extends React.Component {
  
 const styles = StyleSheet.create({
     container: {
-        height:170, 
-        padding:10,
+        padding:15,
         margin:10,
         backgroundColor: 'white',
         shadowColor: '#000',

@@ -1,11 +1,7 @@
 import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity, Modal} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import Entypo from 'react-native-vector-icons/Entypo';
+import { StyleSheet, View} from 'react-native';
 import SimpleButton from './SimpleButton';
-import MediumSimpleButton from './MediumSimpleButton';
+import Colors from '../constants/Colors';
 
 
 export default class ShareButton extends React.Component {
@@ -27,7 +23,6 @@ export default class ShareButton extends React.Component {
 
         <View style={styles.container}>
             <SimpleButton title={'Share with group'} onPress={() => this.toggleModal()}>
-               
             </SimpleButton>
          </View>
     );
@@ -43,9 +38,10 @@ const styles = StyleSheet.create({
 container:{
     borderTopWidth:1,
     borderBottomWidth:1,
-    borderColor:'#CCD1D1',
+    borderColor:Colors.profileBorder,
     padding:10,
     alignItems:'center',
+    
 },
 
 });

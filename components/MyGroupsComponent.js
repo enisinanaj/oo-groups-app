@@ -23,7 +23,7 @@ export default class MyGroupsComponent extends React.Component {
         <View style={styles.container}>
             
             <View style={{marginTop:5,flexDirection:'row', marginLeft:5, flex:0.6}}>
-                <SmallAvatar/>
+                <SmallAvatar smallAvatar={this.props.smallAvatar}/>
                 <TouchableOpacity  onPress={() => this.props.onPress()} style={{alignSelf:'center',marginLeft:5}}>
                     <Text style={{fontSize:14, marginTop:-5}}>{this.state.groupname}</Text>
                 </TouchableOpacity>
