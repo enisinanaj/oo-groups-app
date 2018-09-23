@@ -7,8 +7,17 @@ import Colors from '../constants/Colors';
 
 export default class ChooseInterests extends React.Component {
     static navigationOptions = {
-        header: 
-          null
+        title: 'Scegli i tuoi interessi',
+        headerStyle: {
+            backgroundColor: '#FFF',
+          },
+          headerBackTitleStyle:{
+            color:'transparent',
+          },
+          headerTintColor: 'black',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
       };
     
     constructor(props) {
@@ -29,7 +38,7 @@ export default class ChooseInterests extends React.Component {
     return (
       <View style={styles.container}>
           
-        <Text style={{fontSize:20, marginTop: 30, margin:20,}}>{this.state.welcomeMessage}</Text>
+        <Text style={{fontSize:12, margin: 14}}>{this.state.welcomeMessage}</Text>
         <ScrollView style={{flexDirection:'column'}}>
             <View>
                 <InteresCard image={'https://cdn.images.express.co.uk/img/dynamic/67/590x/Lionel-Messi-975313.jpg?r=1529221257744'} 
@@ -45,15 +54,15 @@ export default class ChooseInterests extends React.Component {
             </View>
         </ScrollView>
 
-            <View style={{flexDirection:'row', paddingHorizontal:20 ,justifyContent:'space-between'}}>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupSuggestions')}>
-                    <Text style={styles.buttons}>SALTA</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupSuggestions')}>
-                    <Text style={styles.buttons}>AVANTI</Text>
-                </TouchableOpacity>
-          </View>
-      </View>
+        <View style={styles.bottomBar}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupSuggestions')}>
+                <Text style={styles.buttons}>Salta</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('GroupSuggestions')}>
+                <Text style={styles.buttons}>Avanti</Text>
+            </TouchableOpacity>
+        </View>
+    </View>
     )
 }
 }
@@ -89,10 +98,19 @@ const styles = StyleSheet.create({
         opacity:0.8,
     },
 
+    bottomBar: {
+        flexDirection:'row',
+        paddingHorizontal:20,
+        paddingBottom: 10,
+        justifyContent:'space-between',
+        borderTopColor: Colors.lightBorder,
+        borderTopWidth: 1
+    },
+
     buttons:{
-        fontSize:25, 
+        fontSize: 18, 
         marginTop: 10, 
-        fontWeight:'bold', 
-        color:Colors.main
+        fontWeight: 'bold', 
+        color: Colors.main
     },
 })

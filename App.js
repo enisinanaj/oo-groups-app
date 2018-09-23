@@ -20,6 +20,7 @@ export default StackNavigator({
     Posts:{screen: HomeFeed} 
   },
   {
+    initialRouteName: 'Home',
     headerMode: 'none'
   }
 );

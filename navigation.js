@@ -36,7 +36,7 @@ import PostRequests from './screens/PostRequests';
         screen: CompletePostCard
       },
       ListMembers:{
-        screen:ListMembers,
+        screen: ListMembers,
       },
       MemberView:{
         screen: MemberView,

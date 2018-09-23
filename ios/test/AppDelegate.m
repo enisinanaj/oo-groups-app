@@ -6,6 +6,7 @@
  */
 
 #import "AppDelegate.h"
+#import "OAuthManager.h"
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -16,14 +17,17 @@
 {
   NSURL *jsCodeLocation;
 
-  //jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  //jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" cwithExtension:@"jsbundle"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Groups"
                                                       initialProperties:nil
                                                       launchOptions:launchOptions];
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
+  
+  //Authentication LINE
+  [OAuthManager setupOAuthHandler:application];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -31,6 +35,13 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+  return [OAuthManager handleOpenUrl:application
+                             openURL:url
+                   sourceApplication:sourceApplication
+                          annotation:annotation];
 }
 
 @end

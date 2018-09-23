@@ -3,11 +3,13 @@ import {Platform, StyleSheet, Text, View, ScrollView, TouchableOpacity,} from 'r
 import OpenGroup from '../components/OpenGroup';
 import {NavigationSingleton} from './login'
 import Colors from '../constants/Colors';
+import APIConsts from '../constants/APIConsts';
 
 
 export default class GroupSuggestion extends React.Component {
     static navigationOptions = {
-        header: null
+        //header: null
+        title: "Scegli i gruppi da seguire"
       };
     
     constructor(props) {
@@ -16,21 +18,11 @@ export default class GroupSuggestion extends React.Component {
         this.state = { 
             groups: []
         }
-
-        /*
-         groups: [{
-            name: "....",
-            admin: "...."
-        }, {
-            name: "...",
-            admin: "..."
-        }]
-        */
     }
 
     componentDidMount() {
         // call URL and get response from server
-        fetch("http://localhost:1337/gruppo")
+        fetch(APIConsts.apiEndpoint + "/gruppo")
         
         // get only the BODY part from response
         .then(
@@ -65,28 +57,26 @@ export default class GroupSuggestion extends React.Component {
   render() {
     
     return (
-    <View style={{flex:1, backgroundColor:'white'}}>
-        <View style={{marginTop:10,padding:10}}>
-            <Text style={{fontSize:20}}>Ecco i gruppi che potrebbero incontrare il tuo interesse </Text>
+    <View style={{flex:1, backgroundColor: Colors.backgroundColor}}>
+        <View style={{padding:10, backgroundColor: 'white', borderBottomColor: Colors.lightBorder, borderBottomWidth: 1}}>
+            <Text style={{fontSize:13, marginHorizontal: 10}}>Ecco i gruppi che potrebbero incontrare il tuo interesse </Text>
         </View>
         <ScrollView style={styles.container}>
-      
-            {/* <GroupCard />
-            <OpenGroup name={'RockandRoll'}/>
-            <GroupCard/> */}
 
             {this.renderGroups()}
 
         </ScrollView>
-        <Text style={{marginHorizontal:25, paddingTop:10,fontSize:14}}> Potrai trovare i gruppi anche successivamente nella sezione ricerca</Text>
-        <View style={{flexDirection:'row', height:50, paddingHorizontal:20 ,justifyContent:'space-between'}}>
-            <TouchableOpacity>
-                <Text style={styles.buttons}>SALTA</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.goToProtectedViews()}>
-                <Text style={styles.buttons}>AVANTI</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={{paddingTop: 10, borderTopColor: Colors.lightBorder, borderTopWidth: 1, backgroundColor: 'white'}}>
+            <Text style={{marginHorizontal: 20, fontSize: 13}}>Potrai trovare i gruppi anche successivamente nella sezione ricerca</Text>
+            <View style={{flexDirection:'row', height:50, paddingHorizontal:20 ,justifyContent:'space-between'}}>
+                <TouchableOpacity>
+                    <Text style={styles.buttons}>Salta</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.goToProtectedViews()}>
+                    <Text style={styles.buttons}>Avanti</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     </View>
     )
 }
@@ -94,12 +84,12 @@ export default class GroupSuggestion extends React.Component {
  
 const styles = StyleSheet.create({
     container: {
-      flexDirection:'column',
-      backgroundColor: 'white',
+      flexDirection: 'column',
+      backgroundColor: Colors.backgroundColor,
       paddingBottom:10,
     },
     buttons:{
-        fontSize:20, 
+        fontSize:18, 
         marginTop: 10, 
         fontWeight:'bold', 
         color:Colors.main
