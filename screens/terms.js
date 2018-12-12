@@ -1,19 +1,23 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {StyleSheet,Text, ScrollView, View, TouchableOpacity, Dimensions} from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/Colors';
+import {SafeAreaView} from 'react-navigation';
+import APIConsts from '../constants/APIConsts';
+import User from '../controllers/user/instance';
 
 export default class Terms extends React.Component {
     static navigationOptions = {
         title: 'Termini e condizioni',
-        headerStyle: {
+        /*headerStyle: {
           backgroundColor: 'white',
         },
         headerTintColor: 'black',
         headerTitleStyle: {
           fontWeight: 'bold',
-        },
+        },*/
       };
+
     constructor() {
         super();
     
@@ -25,11 +29,27 @@ export default class Terms extends React.Component {
 
     hideShowCheck(){
         this.setState({checked: !this.state.checked})
-    } 
+    }
+
+    termsAccepted() {
+        var terms = {
+            tos_accettato: true
+        }
+
+        fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user["_id"], {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(terms)
+        }).then(() => {
+            this.props.navigation.navigate('UsernameSetUp');
+        })
+    }
+
   render() {
-    
     return (
-      <View style={styles.container}> 
+      <SafeAreaView style={styles.container} forceInset={{vertical: 'always'}}> 
         <ScrollView>
             <Text style={styles.textBox}>{this.state.terms}</Text>
         </ScrollView>
@@ -46,10 +66,10 @@ export default class Terms extends React.Component {
                 <Text style={{fontSize: 14, marginRight: 15, fontWeight: 'bold'}}>Dichiaro di aver letto e di accettare i termini e le condizioni</Text>
             </TouchableOpacity>
         </View>
-        <TouchableOpacity disabled={!this.state.checked} onPress={() => this.props.navigation.navigate('UsernameSetUp')}> 
+        <TouchableOpacity disabled={!this.state.checked} onPress={() => this.termsAccepted()}> 
             <Text style={[styles.next, this.state.checked? styles.enabled : styles.disabled]}>Avanti</Text>
         </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     )
 }
 }

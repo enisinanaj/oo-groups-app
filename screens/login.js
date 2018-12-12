@@ -7,6 +7,10 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import Colors, {Shadow} from '../constants/Colors';
 import OAuthManager from 'react-native-oauth';
 import InstagramLogin from 'react-native-instagram-login'
+import APIConsts from '../constants/APIConsts';
+import User from '../controllers/user/instance';
+
+const RNFS = require('react-native-fs');
 
 const config =  {
     twitter: {
@@ -37,38 +41,110 @@ export class  NavigationSingleton {
 
 export default class Login extends Component {
     static navigationOptions = {
-        header: 
-          null
+        header: null
     };
 
     constructor(props) {
         super(props);
     }
 
-    doLogin(token, type) {
-        fetch("")
+    goToNextPage(user) {
+        fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + user.indirizzo_email)
+            .then(result => result.json())
+            .then(result => {
+                if (result.length == 0) {
+                    this.registerNewUser(user);
+                } else {
+                    User.getInstance().user = result[0];
+                    User.getInstance().user.registered = true;
+                    this.goToTerms();
+                }
+
+            }).catch(e => {
+                console.warn(e)
+            });
+    }
+
+    getDataFromChannel(channel) {
+        if (channel == 'facebook') {
+            OAUTH_MANAGER
+            .makeRequest('facebook', '/me')
+            .then(resp => {
+                console.warn('Data ->', resp.data);
+            }).catch(e => console.error(e));
+        }
+
+        if (channel == "google") { 
+            const googleUrl = 'https://www.googleapis.com/plus/v1/people/me';
+            OAUTH_MANAGER
+            .makeRequest('google', googleUrl)
+            .then(resp => {
+                console.warn('Data -> ', resp.data);
+                var user = {
+                    username: resp.data.displayName,
+                    indirizzo_email: resp.data.emails[0].value,
+                    //foto_profilo: resp.data.image.url,
+                    access_token: resp.data.id,
+                    password: resp.data.id,
+                    tipoAutenticazione: {
+                        _id: '5be5cef31e7e268637ea41e4'
+                    }
+                }
+
+                this.goToNextPage(user, "google")
+            }).catch(e => {console.warn(e)});
+        }
+    }
+
+    goToTerms() {
+        if (User.getInstance().user.registered && User.getInstance().user.tos_accettato) {
+            this.props.navigation.navigate('UsernameSetUp');
+        } else {
+            this.props.navigation.navigate('Terms');
+        }
+    }
+
+    registerNewUser(user) {
+        return fetch(APIConsts.apiEndpoint + "/utente", {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        }).then((result) => {
+            console.error("result: " + JSON.stringify(result))
+            // save user instance
+            RNFS.mkdir(RNFS.DocumentDirectoryPath + '/.user/').then(e => {
+                const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
+                // write the file
+                RNFS.writeFile(path, user.id + '\n' + user.indirizzo_email, 'utf8')
+                .then(() => {
+                    this.goToTerms();
+                })
+                .catch((err) => {
+                    console.error(err.message);
+                });
+            }).catch(e => {
+                console.error(e)
+            })
+        }).catch(e => {console.error(e)})
     }
 
     onGoogleLogin() {
-        //OAUTH_MANAGER.deauthorize('google');
         OAUTH_MANAGER.authorize('google', {scopes: 'email+profile'})
-            .then(resp => console.log(resp))
-            .then(() => this.props.navigation.navigate('Terms'))
+            .then(() => this.getDataFromChannel('google'))
             .catch(err => console.log(err));
     }
 
     onFacebookLogin() {
-        //OAUTH_MANAGER.deauthorize('facebook');
-        OAUTH_MANAGER.authorize('facebook', {}) //{scopes: 'email,profile'}
-            .then(resp => console.log(resp))
-            .then(() => this.props.navigation.navigate('Terms'))
-            .catch(err => console.log(err));
+        OAUTH_MANAGER.deauthorize('facebook');
+        OAUTH_MANAGER.authorize('facebook', {scopes: 'email,public_profile'})
+            .then((resp) => this.goToNextPage(resp.response.credentials.accessToken, "facebook"))
+            .catch(err => console.error(err));
     }
 
     onTwitterLogin() {
-        //OAUTH_MANAGER.deauthorize('twitter');
-        OAUTH_MANAGER.authorize('twitter', {}) //{scopes: 'email,profile'}
-            .then(resp => console.log(resp))
+        OAUTH_MANAGER.authorize('twitter', {})
             .then(() => this.props.navigation.navigate('Terms'))
             .catch(err => console.log(err));
     }

@@ -20,14 +20,31 @@ export default class UsernameSetUp extends React.Component {
     
   };
 
-    constructor() {
-        super();
-    
-        this.state = { 
-          inputValue:'',
-        }
+  constructor() {
+      super();
+  
+      this.state = { 
+        username:'',
+      }
+  }
+
+  termsAccepted() {
+    var terms = {
+        username: this.state.username
     }
 
+    /*fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user["_id"], {
+        method: 'put',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(terms)
+    }).then(() => {
+        this.props.navigation.navigate('UsernameSetUp');
+    })*/
+
+    this.props.navigation.navigate('UsernameSetUp');
+  }
 
   render() {
     
@@ -43,13 +60,13 @@ export default class UsernameSetUp extends React.Component {
             autoCapitalize={"none"}
             autoCorrect={"false"}
             style={[styles.textInput, Shadow.filterShadow]}
-            onChangeText={(inputValue) => this.setState({inputValue})}
-            value={this.state.text}
+            onChangeText={(username) => this.setState({username})}
+            value={this.state.username}
             placeholder={'Nome Utente'}
             placeholderTextColor={'#aaa'}
           />
-          <TouchableOpacity disabled={this.state.inputValue==''} onPress={() => this.props.navigation.navigate('ChooseInterests')}>
-            <Text style={[styles.next, this.state.inputValue=='' ? {color: Colors.inactive} : {color: Colors.main}]}>Avanti</Text>
+          <TouchableOpacity disabled={this.state.username == ''} onPress={() => this.props.navigation.navigate('ChooseInterests')}>
+            <Text style={[styles.next, this.state.username == '' ? {color: Colors.inactive} : {color: Colors.main}]}>Avanti</Text>
           </TouchableOpacity>
       </View>
     )

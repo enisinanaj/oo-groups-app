@@ -1,4 +1,5 @@
 import React from 'react';
+import {View, ActivityIndicator} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo'
 import { TabNavigator, TabBarBottom } from 'react-navigation'; // Version can be specified in package.json
@@ -25,7 +26,9 @@ import SubscribeRequests from './screens/SubscribeRequests';
 import SettingsGroups from './screens/SettingsGroups';
 import PostRequests from './screens/PostRequests';
 
+import User from './controllers/user/instance';
 
+const RNFS = require('react-native-fs');
 
   const HomeStack = StackNavigator(
     {
@@ -79,6 +82,7 @@ import PostRequests from './screens/PostRequests';
       initialRouteName: 'Profile',
     }
   );
+
   const GroupsStack = StackNavigator(
     {
     MyGroups:{
@@ -88,10 +92,10 @@ import PostRequests from './screens/PostRequests';
     {
       initialRouteName: 'MyGroups',
     }
-  
   )
+
   const NotificationsStack = StackNavigator(
-    {
+  {
       Notifications:{
           screen: NotificationsScreen,
       },
@@ -99,7 +103,6 @@ import PostRequests from './screens/PostRequests';
     {
       initialRouteName: 'Notifications',
     }
-  
   )
   
   const PostStack = StackNavigator(
@@ -119,9 +122,6 @@ import PostRequests from './screens/PostRequests';
 
   const LoginStack = StackNavigator(
     {
-      //Login: {
-        //  screen: Login,
-      //},
       Login:{
         screen: Login,
       },
@@ -138,7 +138,7 @@ import PostRequests from './screens/PostRequests';
         screen: Terms,
       },
     }, {
-      initialRouteName: 'Login',
+      initialRouteName: 'Login'
     }
   )
 
@@ -149,7 +149,6 @@ import PostRequests from './screens/PostRequests';
     Groups:{ screen: GroupsStack},
     Notifications:{screen: NotificationsStack},
     Profile: { screen: ProfileStack },
-
   },
   {
     navigationOptions: ({ navigation, header }) => ({
@@ -191,7 +190,7 @@ import PostRequests from './screens/PostRequests';
 
 //NavigationSingleton.instance.navigate("");
 
-export default StackNavigator({
+const MainNavigationStack = StackNavigator({
   UnprotectedViews:{
       screen: LoginStack,
   },
@@ -205,3 +204,35 @@ export default StackNavigator({
     gesturesEnabled: false
   })
 })
+
+export default class MainNavigation extends React.Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+      initialRouteName: 'UnprotectedViews',
+      loading: true
+    }
+  }
+
+  componentDidMount() {
+    const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
+    RNFS.readFile(path).then(contents => {
+        User.getInstance().user.email = contents.split("\n")[1];
+        this.setState({loading: false});
+        this.setState({initialRouteName: 'ProtectedViews'});
+    }).catch(error => {
+      this.setState({loading: false});
+    })
+  }
+
+  render() {
+    if (this.state.loading) {
+      return (<View>
+        <ActivityIndicator />
+      </View>)
+    }
+    return (this.state.initialRouteName != 'ProtectedViews') ? <MainNavigationStack /> : <HomeNavigation />
+  }
+}

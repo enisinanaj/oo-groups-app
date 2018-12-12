@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, ScrollView,TouchableOpacity,} from 'react-native';
 import InteresCard from '../components/interestCard';
 import Colors from '../constants/Colors';
-
+import {SafeAreaView} from 'react-navigation';
 
 
 export default class ChooseInterests extends React.Component {
@@ -36,7 +36,7 @@ export default class ChooseInterests extends React.Component {
   render() {
     
     return (
-      <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
           
         <Text style={{fontSize:12, margin: 14}}>{this.state.welcomeMessage}</Text>
         <ScrollView style={{flexDirection:'column'}}>
@@ -62,7 +62,7 @@ export default class ChooseInterests extends React.Component {
                 <Text style={styles.buttons}>Avanti</Text>
             </TouchableOpacity>
         </View>
-    </View>
+    </SafeAreaView>
     )
 }
 }
@@ -70,7 +70,7 @@ export default class ChooseInterests extends React.Component {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#F5FCFF',
+      backgroundColor: Colors.backgroundColor,
       paddingBottom:10
     },
 

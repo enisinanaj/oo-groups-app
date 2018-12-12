@@ -94,15 +94,11 @@ export default class HomeFeed extends React.Component {
   
 }
 
-
-
-
 const styles = StyleSheet.create({
   container: {
     flex:1,
     backgroundColor: '#F5FCFF',
     flexDirection:'column',
-
   },
 
 });
