@@ -221,7 +221,7 @@ export default class MainNavigation extends React.Component {
     RNFS.readFile(path).then(contents => {
         User.getInstance().user.email = contents.split("\n")[1];
         this.setState({loading: false});
-        this.setState({initialRouteName: 'ProtectedViews'});
+        //this.setState({initialRouteName: 'ProtectedViews'});
     }).catch(error => {
       this.setState({loading: false});
     })

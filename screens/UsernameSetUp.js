@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Width,Text, height, View, Image, TextInput,TouchableOpacity, Button} from 'react-native';
 import Colors, { Shadow } from '../constants/Colors';
-
-
+import User from '../controllers/user/instance'
 
 export default class UsernameSetUp extends React.Component {
   static navigationOptions = {
@@ -22,28 +21,31 @@ export default class UsernameSetUp extends React.Component {
 
   constructor() {
       super();
+
+      let user = User.getInstance();
   
       this.state = { 
-        username:'',
+        username: user.username,
       }
   }
 
-  termsAccepted() {
-    var terms = {
-        username: this.state.username
+  updateAndGoNext() { 
+
+    var username = {
+      username: this.state.username
     }
 
-    /*fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user["_id"], {
+    fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user["_id"], {
         method: 'put',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(terms)
+        body: JSON.stringify(username)
     }).then(() => {
         this.props.navigation.navigate('UsernameSetUp');
-    })*/
+    })
 
-    this.props.navigation.navigate('UsernameSetUp');
+    //TODO: update user profile photo in chain after username, and only then go to next view.
   }
 
   render() {
@@ -65,7 +67,7 @@ export default class UsernameSetUp extends React.Component {
             placeholder={'Nome Utente'}
             placeholderTextColor={'#aaa'}
           />
-          <TouchableOpacity disabled={this.state.username == ''} onPress={() => this.props.navigation.navigate('ChooseInterests')}>
+          <TouchableOpacity disabled={this.state.username == ''} onPress={() => this.updateAndGoNext()}>
             <Text style={[styles.next, this.state.username == '' ? {color: Colors.inactive} : {color: Colors.main}]}>Avanti</Text>
           </TouchableOpacity>
       </View>

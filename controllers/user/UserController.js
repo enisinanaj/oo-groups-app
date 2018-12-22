@@ -39,7 +39,6 @@ export var onFacebookLogin = () => {
 
 var authorizeFacebook = () => {
     return OAUTH_MANAGER.authorize('facebook', {scopes: 'email'})
-        .then((resp) => {console.log("NLC -> facebook authorize response: " + JSON.stringify(resp)); return resp;})
         .then(() => getDataFromChannel(AUTH_PROVIDERS.facebook))
         .catch(err => console.error(err));
 }
@@ -64,12 +63,12 @@ var authorizeTwitter = () => {
 var getDataFromChannel = (channel) => {
     if (channel == AUTH_PROVIDERS.facebook) {
         return OAUTH_MANAGER
-            .makeRequest('facebook', '/me?fields=email,id,name')
+            .makeRequest('facebook', '/me?fields=email,id,name,picture{url}')
             .then(resp => {
                 var user = {
                     username: resp.data.name,
                     indirizzo_email: resp.data.email,
-                    //foto_profilo: resp.data.image.url,
+                    foto_profilo: resp.data.picture.data.url.replace("width=50", "width=400").replace("height=50", "height=400"),
                     access_token: resp.data.id,
                     password: resp.data.id,
                     tipoAutenticazione: {
@@ -80,17 +79,23 @@ var getDataFromChannel = (channel) => {
                 return user
             })
             .then(u => finalizeUserData(u))
-            .catch(e => console.error(e));
+            .catch(e => {
+                console.error("attention error: ")
+                console.error(e)
+            });
     }
 
     if (channel == AUTH_PROVIDERS.twitter) {
         return OAUTH_MANAGER
             .makeRequest('twitter', 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true&skip_status=true&include_entities=false')
             .then(resp => {
+
+                console.warn("Twitter display picture url: " + resp.data.profile_image_url_https);
+
                 var user = {
                     username: resp.data.screen_name,
                     indirizzo_email: resp.data.email,
-                    //foto_profilo: resp.data.image.url,
+                    foto_profilo: resp.data.profile_image_url_https.replace("_normal", ""),
                     access_token: resp.data.id,
                     password: resp.data.id,
                     tipoAutenticazione: {
@@ -98,7 +103,7 @@ var getDataFromChannel = (channel) => {
                     }
                 }
 
-                return user
+                return user;
             })
             .then(u => finalizeUserData(u))
             .catch(e => console.error(e));
@@ -151,6 +156,9 @@ var getDataFromChannel = (channel) => {
 }
 
 var registerNewUser = (user) => {
+    var {foto_profilo} = user;
+    user.foto_profilo = undefined;
+
     return fetch(APIConsts.apiEndpoint + "/utente", {
         method: 'post',
         headers: {
@@ -158,14 +166,39 @@ var registerNewUser = (user) => {
         },
         body: JSON.stringify(user)
     }).then((result) => {
+        return result.json();
+    }).then((responseJSON) => {
         // save user instance
         return RNFS.mkdir(RNFS.DocumentDirectoryPath + '/.user/').then(() => {
             const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
             return RNFS.writeFile(path, user.id + '\n' + user.indirizzo_email, 'utf8')
-            .catch((err) => {
-                console.error(err.message);
-            });
-        }).catch(e => {
+        }).then(() => {
+            console.warn(RNFS.DocumentDirectoryPath + "/.user/profilePic.jpg");
+            return RNFS.downloadFile({
+                fromUrl: foto_profilo,
+                toFile: RNFS.DocumentDirectoryPath + "/.user/profilePic.jpg" // TODO: get filename from profile picture
+            }).promise.then(() => {
+                const data = new FormData();
+                
+                data.append('refId', responseJSON.id);
+                data.append('ref', 'utente');
+                data.append('field', 'foto_profilo');
+                data.append('files', {
+                    uri: RNFS.DocumentDirectoryPath + "/.user/profilePic.jpg",
+                    type: 'image/jpeg', // or photo.type
+                    name: 'profilePic.jpg'
+                });
+
+                return fetch(APIConsts.apiEndpoint + "/upload", {
+                    method: 'POST',
+                    body: data
+                }).then(res => {
+                    console.warn(res)
+                    return user
+                });
+            })
+        })
+        .catch(e => {
             console.error(e)
         })
     }).catch(e => {console.error(e)})
