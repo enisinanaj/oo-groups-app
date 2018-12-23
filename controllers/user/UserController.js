@@ -138,10 +138,14 @@ var getDataFromChannel = (channel) => {
         })
         .then((response) => response.json())
         .then((response) => {
+
+            console.warn("instagram data: " + JSON.stringify(response));
+
             var user = {
                 username: response.data.username,
                 indirizzo_email: response.data.username + "@instagram",
-                //foto_profilo: resp.data.image.url,
+                foto_profilo: response.data.profile_picture,
+                foto_profilo_ext: 'jpg',
                 access_token: response.data.id,
                 password: response.data.id,
                 tipoAutenticazione: {
@@ -200,15 +204,13 @@ var registerNewUser = (user) => {
 
 var postProfilePicture = (user, responseJSON, localProfilePicture) => {
     const data = new FormData();
-
-    console.warn("local picture file: " + localProfilePicture);
     
     data.append('refId', responseJSON.id);
     data.append('ref', 'utente');
     data.append('field', 'foto_profilo');
     data.append('files', {
         uri: localProfilePicture,
-        type: 'image/jpeg', // or photo.type
+        type: 'image/jpeg',
         name: `${responseJSON.id}.jpg`
     });
 
@@ -217,7 +219,6 @@ var postProfilePicture = (user, responseJSON, localProfilePicture) => {
             method: 'POST',
             body: data
         }).then(res => {
-            console.warn(res)
             return user
         })
         .catch(e => console.error(e))
@@ -229,8 +230,6 @@ var finalizeUserData = (user) => {
     .then(result => result.json())
     .then(result => {
         if (result.length == 0) {
-            console.warn("query results: " + result.length);
-
             return registerNewUser(user);
         } else {
             User.getInstance().user = result[0];
