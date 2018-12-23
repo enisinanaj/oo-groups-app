@@ -3,6 +3,18 @@ import {StyleSheet, Text, View, Image, TextInput,TouchableOpacity} from 'react-n
 import Colors, { Shadow } from '../constants/Colors';
 import User from '../controllers/user/instance'
 import Feather from 'react-native-vector-icons/Feather';
+import ImagePicker from 'react-native-image-picker';
+
+// More info on all the options is below in the API Reference... just some common use cases shown here
+const options = {
+  title: 'Select Avatar',
+  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+  storageOptions: {
+    skipBackup: true,
+    path: 'images',
+  },
+};
+
 
 export default class UsernameSetUp extends React.Component {
   static navigationOptions = {
@@ -26,6 +38,29 @@ export default class UsernameSetUp extends React.Component {
         ...User.getInstance().user,
         foto_profilo_changed: false
       }
+  }
+
+  updateAvatar() {
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
+    
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = { uri: response.uri };
+    
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    
+        this.setState({
+          foto_profilo: source.uri,
+        });
+      }
+    });
   }
 
   updateAndGoNext() { 
@@ -82,7 +117,7 @@ export default class UsernameSetUp extends React.Component {
             source={{uri: this.state.foto_profilo}}
           />
           <View style={styles.changeAvatar}>
-            <TouchableOpacity style={styles.touchableChangeAvatar}>
+            <TouchableOpacity style={styles.touchableChangeAvatar} onPress={() => this.updateAvatar()}>
               <Feather name="camera" size={22} color={Colors.main} style={{alignSelf: 'center'}}/>
             </TouchableOpacity>
           </View>
