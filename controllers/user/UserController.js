@@ -63,12 +63,13 @@ var authorizeTwitter = () => {
 var getDataFromChannel = (channel) => {
     if (channel == AUTH_PROVIDERS.facebook) {
         return OAUTH_MANAGER
-            .makeRequest('facebook', '/me?fields=email,id,name,picture{url}')
+            .makeRequest('facebook', '/me?fields=email,id,name,picture')
             .then(resp => {
                 var user = {
                     username: resp.data.name,
                     indirizzo_email: resp.data.email,
-                    foto_profilo: resp.data.picture.data.url.replace("width=50", "width=400").replace("height=50", "height=400"),
+                    foto_profilo: `https://graph.facebook.com/${resp.data.id}/picture?height=400&width=400`,
+                    foto_profilo_ext: 'jpeg',
                     access_token: resp.data.id,
                     password: resp.data.id,
                     tipoAutenticazione: {
@@ -156,8 +157,10 @@ var getDataFromChannel = (channel) => {
 }
 
 var registerNewUser = (user) => {
-    var {foto_profilo} = user;
-    user.foto_profilo = undefined;
+    const {foto_profilo} = user
+    const fileExtension = user.foto_profilo_ext || foto_profilo.split(".").pop()
+    user.foto_profilo = undefined
+    user.foto_profilo_ext = undefined
 
     return fetch(APIConsts.apiEndpoint + "/utente", {
         method: 'post',
@@ -168,55 +171,74 @@ var registerNewUser = (user) => {
     }).then((result) => {
         return result.json();
     }).then((responseJSON) => {
+        const localProfilePicture = RNFS.DocumentDirectoryPath + `/.user/${responseJSON.id}.${fileExtension}`
+
         // save user instance
         return RNFS.mkdir(RNFS.DocumentDirectoryPath + '/.user/').then(() => {
             const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
             return RNFS.writeFile(path, user.id + '\n' + user.indirizzo_email, 'utf8')
         }).then(() => {
-            console.warn(RNFS.DocumentDirectoryPath + "/.user/profilePic.jpg");
+            let contentLength = 0;
             return RNFS.downloadFile({
                 fromUrl: foto_profilo,
-                toFile: RNFS.DocumentDirectoryPath + "/.user/profilePic.jpg" // TODO: get filename from profile picture
-            }).promise.then(() => {
-                const data = new FormData();
-                
-                data.append('refId', responseJSON.id);
-                data.append('ref', 'utente');
-                data.append('field', 'foto_profilo');
-                data.append('files', {
-                    uri: RNFS.DocumentDirectoryPath + "/.user/profilePic.jpg",
-                    type: 'image/jpeg', // or photo.type
-                    name: 'profilePic.jpg'
-                });
-
-                return fetch(APIConsts.apiEndpoint + "/upload", {
-                    method: 'POST',
-                    body: data
-                }).then(res => {
-                    console.warn(res)
-                    return user
-                });
+                toFile: localProfilePicture,
+                begin: e => contentLength = e.contentLength
+            }).promise
+            .then(e => {
+                while (e.bytesWritten < contentLength) {
+                    // stop
+                }
+                postProfilePicture(user, responseJSON, localProfilePicture)
             })
+            .catch(e => console.error(e))
         })
         .catch(e => {
             console.error(e)
         })
-    }).catch(e => {console.error(e)})
+    }).catch(e => console.error(e))
+}
+
+var postProfilePicture = (user, responseJSON, localProfilePicture) => {
+    const data = new FormData();
+
+    console.warn("local picture file: " + localProfilePicture);
+    
+    data.append('refId', responseJSON.id);
+    data.append('ref', 'utente');
+    data.append('field', 'foto_profilo');
+    data.append('files', {
+        uri: localProfilePicture,
+        type: 'image/jpeg', // or photo.type
+        name: `${responseJSON.id}.jpg`
+    });
+
+    setTimeout(() => {
+        return fetch(APIConsts.apiEndpoint + "/upload", {
+            method: 'POST',
+            body: data
+        }).then(res => {
+            console.warn(res)
+            return user
+        })
+        .catch(e => console.error(e))
+    }, 300)
 }
 
 var finalizeUserData = (user) => {
     fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + user.indirizzo_email)
-        .then(result => result.json())
-        .then(result => {
-            if (result.length == 0) {
-                return registerNewUser(user);
-            } else {
-                User.getInstance().user = result[0];
-                User.getInstance().user.registered = true;
-            }
+    .then(result => result.json())
+    .then(result => {
+        if (result.length == 0) {
+            console.warn("query results: " + result.length);
 
-            return result;
-        }).catch(e => {
-            console.warn(e)
-        });
+            return registerNewUser(user);
+        } else {
+            User.getInstance().user = result[0];
+            User.getInstance().user.registered = true;
+        }
+
+        return result;
+    }).catch(e => {
+        console.warn(e)
+    });
 }
