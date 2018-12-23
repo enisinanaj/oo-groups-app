@@ -68,10 +68,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Permetti l'utilizzo della fotocamera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Dai accesso al rullino</string>
+	<string>Permetti l'accesso al rullino</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
