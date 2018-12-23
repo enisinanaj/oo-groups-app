@@ -2,7 +2,7 @@ import React from 'react';
 import {View, ActivityIndicator} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo'
-import { TabNavigator, TabBarBottom } from 'react-navigation'; // Version can be specified in package.json
+import { TabNavigator, TabBarBottom, createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
 import { StackNavigator } from 'react-navigation';
 import Login from './screens/login';
 import Terms from './screens/terms';
@@ -27,6 +27,7 @@ import SettingsGroups from './screens/SettingsGroups';
 import PostRequests from './screens/PostRequests';
 
 import User from './controllers/user/instance';
+import APIConsts from './constants/APIConsts';
 
 const RNFS = require('react-native-fs');
 
@@ -120,7 +121,7 @@ const RNFS = require('react-native-fs');
     }
   )
 
-  const LoginStack = StackNavigator(
+  const createLoginStack = (initialRouteName) => createStackNavigator(
     {
       Login:{
         screen: Login,
@@ -138,7 +139,7 @@ const RNFS = require('react-native-fs');
         screen: Terms,
       },
     }, {
-      initialRouteName: 'Login'
+      initialRouteName: initialRouteName
     }
   )
 
@@ -188,22 +189,33 @@ const RNFS = require('react-native-fs');
   }
 );
 
-//NavigationSingleton.instance.navigate("");
 
-const MainNavigationStack = StackNavigator({
-  UnprotectedViews:{
-      screen: LoginStack,
-  },
-  ProtectedViews:{
-    screen: HomeNavigation,
-  },
-}, {
-  initialRouteName: 'UnprotectedViews',
-  headerMode: 'none',
-  navigationOptions: () => ({
-    gesturesEnabled: false
-  })
-})
+class MainNavigationComponent extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    const LoginStack = createLoginStack(this.props.loginInitialRouteName)
+
+    const MainNavigation = createStackNavigator({
+      UnprotectedViews:{
+          screen: LoginStack,
+      },
+      ProtectedViews:{
+        screen: HomeNavigation,
+      },
+    }, {
+      initialRouteName: this.props.initialRouteName,
+      headerMode: 'none',
+      navigationOptions: () => ({
+        gesturesEnabled: false
+      })
+    })
+
+    return <MainNavigation />
+  }
+}
 
 export default class MainNavigation extends React.Component {
 
@@ -212,6 +224,7 @@ export default class MainNavigation extends React.Component {
 
     this.state = {
       initialRouteName: 'UnprotectedViews',
+      loginInitialRouteName: 'Login',
       loading: true
     }
   }
@@ -220,19 +233,52 @@ export default class MainNavigation extends React.Component {
     const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
     RNFS.readFile(path).then(contents => {
         User.getInstance().user.email = contents.split("\n")[1];
-        this.setState({loading: false});
-        //this.setState({initialRouteName: 'ProtectedViews'});
-    }).catch(error => {
-      this.setState({loading: false});
+
+        fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + User.getInstance().user.email)
+        .then(response => response.json())
+        .then(responseJson => {
+          if (responseJson.length > 0) {
+            User.getInstance().user = responseJson[0];
+            
+            if (User.getInstance().user.tos_accettato == false) {
+              this.setState({
+                loading: false,
+                loginInitialRouteName: 'Terms'
+              });
+            } else if (User.getInstance().user.foto_profilo == undefined 
+              || Object.keys(User.getInstance().user.foto_profilo).length == 0
+              || User.getInstance().user.username == undefined 
+              || User.getInstance().user.username == "" ) {
+
+              User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
+              this.setState({
+                loading: false,
+                loginInitialRouteName: 'UsernameSetUp',
+              });
+
+            } else {
+              this.setState({
+                loading: false,
+                loginInitialRouteName: 'Login',
+                initialRouteName: 'ProtectedViews'
+              });
+            }
+          } else {
+            this.setState({loading: false});
+          }
+        })
     })
   }
 
   render() {
     if (this.state.loading) {
-      return (<View>
-        <ActivityIndicator />
+      return (<View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <ActivityIndicator />
+        </View>
       </View>)
     }
-    return (this.state.initialRouteName != 'ProtectedViews') ? <MainNavigationStack /> : <HomeNavigation />
+    return (
+      <MainNavigationComponent initialRouteName={this.state.initialRouteName} loginInitialRouteName={this.state.loginInitialRouteName} /> )
   }
 }

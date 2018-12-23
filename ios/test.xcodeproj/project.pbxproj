@@ -31,6 +31,7 @@
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		5FAACEC6214D23EA009D8C62 /* libOAuthManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FAACE9E214D23DC009D8C62 /* libOAuthManager.a */; };
 		5FAACED0214D243D009D8C62 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FAACECD214D2435009D8C62 /* libRCTLinking.a */; };
+		5FBA78A321CFE38C00754F85 /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBA78A221CFE37E00754F85 /* libRNImagePicker.a */; };
 		5FE147E621978D3600678432 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FE147E221978D1E00678432 /* libRNFS.a */; };
 		6EB9C231C4B84952A06A9ED4 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 141F3A5B7C954BA6A87F9E6A /* libRNVectorIcons.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
@@ -325,6 +326,13 @@
 			remoteGlobalIDString = 2D2A28471D9B043800D4039D;
 			remoteInfo = "RCTLinking-tvOS";
 		};
+		5FBA78A121CFE37E00754F85 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5FBA789D21CFE37E00754F85 /* RNImagePicker.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 014A3B5C1C6CF33500B6D375;
+			remoteInfo = RNImagePicker;
+		};
 		5FE147E121978D1E00678432 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5FE147B321978D1E00678432 /* RNFS.xcodeproj */;
@@ -391,6 +399,7 @@
 		5F2273FE214D2B9E00F5918E /* test.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = test.entitlements; path = test/test.entitlements; sourceTree = "<group>"; };
 		5FAACE97214D23DC009D8C62 /* OAuthManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OAuthManager.xcodeproj; path = "../node_modules/react-native-oauth/ios/OAuthManager.xcodeproj"; sourceTree = "<group>"; };
 		5FAACEC7214D2435009D8C62 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		5FBA789D21CFE37E00754F85 /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
 		5FE147B321978D1E00678432 /* RNFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNFS.xcodeproj; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; };
 		61FA450A82C5481F9C6D4873 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		694DB31DE14F45B789BF391F /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -431,7 +440,6 @@
 				23031EEC212349DB003DE543 /* libRCTCameraRoll.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
-				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
@@ -442,6 +450,8 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
+				146834051AC3E58100842450 /* libReact.a in Frameworks */,
+				5FBA78A321CFE38C00754F85 /* libRNImagePicker.a in Frameworks */,
 				6EB9C231C4B84952A06A9ED4 /* libRNVectorIcons.a in Frameworks */,
 				46C040700E97150A84140806 /* Pods_test.framework in Frameworks */,
 			);
@@ -610,6 +620,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		5FBA789E21CFE37E00754F85 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5FBA78A221CFE37E00754F85 /* libRNImagePicker.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		5FE147B421978D1E00678432 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -642,6 +660,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				5FBA789D21CFE37E00754F85 /* RNImagePicker.xcodeproj */,
 				5FE147B321978D1E00678432 /* RNFS.xcodeproj */,
 				5FAACEC7214D2435009D8C62 /* RCTLinking.xcodeproj */,
 				5FAACE97214D23DC009D8C62 /* OAuthManager.xcodeproj */,
@@ -780,7 +799,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 6M95A8XHH3;
+						DevelopmentTeam = Y672FNXW97;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -864,6 +883,10 @@
 				{
 					ProductGroup = 5FE147B421978D1E00678432 /* Products */;
 					ProjectRef = 5FE147B321978D1E00678432 /* RNFS.xcodeproj */;
+				},
+				{
+					ProductGroup = 5FBA789E21CFE37E00754F85 /* Products */;
+					ProjectRef = 5FBA789D21CFE37E00754F85 /* RNImagePicker.xcodeproj */;
 				},
 				{
 					ProductGroup = 23031EE121234834003DE543 /* Products */;
@@ -1152,6 +1175,13 @@
 			remoteRef = 5FAACECE214D2435009D8C62 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		5FBA78A221CFE37E00754F85 /* libRNImagePicker.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNImagePicker.a;
+			remoteRef = 5FBA78A121CFE37E00754F85 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5FE147E221978D1E00678432 /* libRNFS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1278,10 +1308,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-test/Pods-test-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/DCTAuth/DCTAuth.framework",
+				"${BUILT_PRODUCTS_DIR}/React/React.framework",
+				"${BUILT_PRODUCTS_DIR}/react-native-image-picker/react_native_image_picker.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DCTAuth.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/react_native_image_picker.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1393,7 +1427,7 @@
 				CODE_SIGN_ENTITLEMENTS = test/test.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 6M95A8XHH3;
+				DEVELOPMENT_TEAM = Y672FNXW97;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
@@ -1420,7 +1454,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = test/test.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6M95A8XHH3;
+				DEVELOPMENT_TEAM = Y672FNXW97;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",

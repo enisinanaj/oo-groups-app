@@ -90,9 +90,6 @@ var getDataFromChannel = (channel) => {
         return OAUTH_MANAGER
             .makeRequest('twitter', 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true&skip_status=true&include_entities=false')
             .then(resp => {
-
-                console.warn("Twitter display picture url: " + resp.data.profile_image_url_https);
-
                 var user = {
                     username: resp.data.screen_name,
                     indirizzo_email: resp.data.email,
@@ -192,7 +189,7 @@ var registerNewUser = (user) => {
                 while (e.bytesWritten < contentLength) {
                     // stop
                 }
-                postProfilePicture(user, responseJSON, localProfilePicture)
+                return postProfilePicture(responseJSON, localProfilePicture)
             })
             .catch(e => console.error(e))
         })
@@ -202,7 +199,7 @@ var registerNewUser = (user) => {
     }).catch(e => console.error(e))
 }
 
-var postProfilePicture = (user, responseJSON, localProfilePicture) => {
+var postProfilePicture = (responseJSON, localProfilePicture) => {
     const data = new FormData();
     
     data.append('refId', responseJSON.id);
@@ -214,6 +211,7 @@ var postProfilePicture = (user, responseJSON, localProfilePicture) => {
         name: `${responseJSON.id}.jpg`
     });
 
+<<<<<<< HEAD
     setTimeout(() => {
         return fetch(APIConsts.apiEndpoint + "/upload", {
             method: 'POST',
@@ -223,6 +221,18 @@ var postProfilePicture = (user, responseJSON, localProfilePicture) => {
         })
         .catch(e => console.error(e))
     }, 300)
+=======
+    return fetch(APIConsts.apiEndpoint + "/upload", {
+        method: 'POST',
+        body: data
+    }).then((response) => {
+        return response.json()
+    }).then(response => {
+        responseJSON.foto_profilo = response[0].url.replace("http://localhost:1337", APIConsts.apiEndpoint)
+        return responseJSON
+    })
+    .catch(e => console.error(e))
+>>>>>>> feature/profile-setup
 }
 
 var finalizeUserData = (user) => {
@@ -230,13 +240,18 @@ var finalizeUserData = (user) => {
     .then(result => result.json())
     .then(result => {
         if (result.length == 0) {
+<<<<<<< HEAD
             return registerNewUser(user);
+=======
+             registerNewUser(user)
+             .then(result => User.getInstance().user = result)
+             .then(() => User.getInstance().registered = true);
+>>>>>>> feature/profile-setup
         } else {
             User.getInstance().user = result[0];
+            User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
             User.getInstance().user.registered = true;
         }
-
-        return result;
     }).catch(e => {
         console.warn(e)
     });
