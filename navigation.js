@@ -27,6 +27,7 @@ import SettingsGroups from './screens/SettingsGroups';
 import PostRequests from './screens/PostRequests';
 
 import User from './controllers/user/instance';
+import APIConsts from './constants/APIConsts';
 
 const RNFS = require('react-native-fs');
 
@@ -138,7 +139,7 @@ const RNFS = require('react-native-fs');
         screen: Terms,
       },
     }, {
-      initialRouteName: 'Login'
+      initialRouteName: 'UsernameSetUp'
     }
   )
 
@@ -220,8 +221,20 @@ export default class MainNavigation extends React.Component {
     const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
     RNFS.readFile(path).then(contents => {
         User.getInstance().user.email = contents.split("\n")[1];
-        this.setState({loading: false});
-        //this.setState({initialRouteName: 'ProtectedViews'});
+
+        fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + User.getInstance().user.email)
+        .then(response => response.json())
+        .then(responseJson => {
+          if (responseJson.length > 0) {
+            User.getInstance().user = responseJson[0];
+            console.warn(JSON.stringify(User.getInstance().user))
+            User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
+            this.setState({loading: false});
+            //this.setState({initialRouteName: 'ProtectedViews'});
+          } else {
+            this.setState({loading: false});
+          }
+        })
     }).catch(error => {
       this.setState({loading: false});
     })
@@ -229,8 +242,10 @@ export default class MainNavigation extends React.Component {
 
   render() {
     if (this.state.loading) {
-      return (<View>
-        <ActivityIndicator />
+      return (<View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <ActivityIndicator />
+        </View>
       </View>)
     }
     return (this.state.initialRouteName != 'ProtectedViews') ? <MainNavigationStack /> : <HomeNavigation />

@@ -1,7 +1,8 @@
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Width,Text, height, View, Image, TextInput,TouchableOpacity, Button} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View, Image, TextInput,TouchableOpacity} from 'react-native';
 import Colors, { Shadow } from '../constants/Colors';
 import User from '../controllers/user/instance'
+import Feather from 'react-native-vector-icons/Feather';
 
 export default class UsernameSetUp extends React.Component {
   static navigationOptions = {
@@ -16,32 +17,54 @@ export default class UsernameSetUp extends React.Component {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
-    
   };
 
   constructor() {
       super();
-
-      let user = User.getInstance();
   
       this.state = { 
-        username: user.username,
+        ...User.getInstance().user,
+        foto_profilo_changed: false
       }
   }
 
   updateAndGoNext() { 
-
     var username = {
       username: this.state.username
     }
 
-    fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user["_id"], {
+    fetch(APIConsts.apiEndpoint + "/utente/" + this.state.id, {
         method: 'put',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(username)
     }).then(() => {
+      if (this.state.foto_profilo_changed) {
+          const data = new FormData();
+          
+          data.append('refId', this.state.id);
+          data.append('ref', 'utente');
+          data.append('field', 'foto_profilo');
+          data.append('files', {
+              uri: this.state.foto_profilo,
+              type: 'image/jpeg', // or photo.type
+              name: `${this.state.id}.jpg`
+          });
+      
+          return fetch(APIConsts.apiEndpoint + "/upload", {
+              method: 'POST',
+              body: data
+          }).then((response) => {
+              return response.json()
+          }).then(response => {
+              responseJSON.foto_profilo = response[0].url.replace("http://localhost:1337", APIConsts.apiEndpoint)
+              return responseJSON
+          })
+          .catch(e => console.error(e))
+      }
+    })
+    .then(() => {
         this.props.navigation.navigate('UsernameSetUp');
     })
 
@@ -56,8 +79,13 @@ export default class UsernameSetUp extends React.Component {
           <Text style={{fontSize:13, marginTop:4, marginLeft: 20, marginRight: 20, color: 'black'}}>Il nome utente è il tuo identificativo all'interno di Groups</Text>
           <Image
             style={[styles.profilePicLarge]}
-            source={{uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvAY9qT1yDcDUsmui17nxZepUbRNF64rEFPSjjdJpskW4cx4iA-Q'}}
+            source={{uri: this.state.foto_profilo}}
           />
+          <View style={styles.changeAvatar}>
+            <TouchableOpacity style={styles.touchableChangeAvatar}>
+              <Feather name="camera" size={22} color={Colors.main} style={{alignSelf: 'center'}}/>
+            </TouchableOpacity>
+          </View>
           <TextInput
             autoCapitalize={"none"}
             autoCorrect={"false"}
@@ -79,6 +107,22 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: Colors.backgroundColor,
+    },
+
+    changeAvatar: {
+      position: 'relative',
+      top: -25,
+      left: 35,
+      justifyContent: 'center',
+      flexDirection: 'row'
+    },
+
+    touchableChangeAvatar: {
+      height: 36,
+      width: 36,
+      backgroundColor: 'white',
+      borderRadius: 18,
+      justifyContent: 'center'
     },
 
     next: {
