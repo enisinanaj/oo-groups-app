@@ -196,7 +196,6 @@ class MainNavigationComponent extends React.Component {
   }
 
   render() {
-    console.warn(this.props.loginInitialRouteName);
     const LoginStack = createLoginStack(this.props.loginInitialRouteName)
 
     const MainNavigation = createStackNavigator({
@@ -246,17 +245,22 @@ export default class MainNavigation extends React.Component {
                 loading: false,
                 loginInitialRouteName: 'Terms'
               });
-            } else if (User.getInstance().user.foto_profilo != undefined && Object.keys(User.getInstance().user.foto_profilo).length > 0) {
+            } else if (User.getInstance().user.foto_profilo == undefined 
+              || Object.keys(User.getInstance().user.foto_profilo).length == 0
+              || User.getInstance().user.username == undefined 
+              || User.getInstance().user.username == "" ) {
+
               User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
               this.setState({
                 loading: false,
                 loginInitialRouteName: 'UsernameSetUp',
-                //initialRouteName: 'ProtectedViews'
               });
-            } else if (User.getInstance().user.tos_accettato) {
+
+            } else {
               this.setState({
                 loading: false,
-                loginInitialRouteName: 'UsernameSetUp'
+                loginInitialRouteName: 'Login',
+                initialRouteName: 'ProtectedViews'
               });
             }
           } else {
@@ -274,8 +278,7 @@ export default class MainNavigation extends React.Component {
         </View>
       </View>)
     }
-    return (//this.state.initialRouteName != 'ProtectedViews') ? 
+    return (
       <MainNavigationComponent initialRouteName={this.state.initialRouteName} loginInitialRouteName={this.state.loginInitialRouteName} /> )
-      // : <HomeNavigation />
   }
 }

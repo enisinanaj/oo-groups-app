@@ -4,11 +4,11 @@ import Colors, { Shadow } from '../constants/Colors';
 import User from '../controllers/user/instance'
 import Feather from 'react-native-vector-icons/Feather';
 import ImagePicker from 'react-native-image-picker';
+import APIConsts from '../constants/APIConsts';
 
 // More info on all the options is below in the API Reference... just some common use cases shown here
 const options = {
-  title: 'Select Avatar',
-  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+  title: 'Seleziona',
   storageOptions: {
     skipBackup: true,
     path: 'images',
@@ -58,6 +58,7 @@ export default class UsernameSetUp extends React.Component {
     
         this.setState({
           foto_profilo: source.uri,
+          foto_profilo_changed: true
         });
       }
     });
@@ -93,14 +94,19 @@ export default class UsernameSetUp extends React.Component {
           }).then((response) => {
               return response.json()
           }).then(response => {
-              responseJSON.foto_profilo = response[0].url.replace("http://localhost:1337", APIConsts.apiEndpoint)
-              return responseJSON
+              this.setState({foto_profilo: response[0].url.replace("http://localhost:1337", APIConsts.apiEndpoint)})
+          })
+          .then(() => {
+            User.getInstance().user = {
+              ...this.state,
+              foto_profilo_changed: undefined
+            }
           })
           .catch(e => console.error(e))
       }
     })
     .then(() => {
-        this.props.navigation.navigate('UsernameSetUp');
+        this.props.navigation.navigate('ProtectedViews');
     })
 
     //TODO: update user profile photo in chain after username, and only then go to next view.
