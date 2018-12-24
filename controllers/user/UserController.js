@@ -72,9 +72,7 @@ var getDataFromChannel = (channel) => {
                     foto_profilo_ext: 'jpeg',
                     access_token: resp.data.id,
                     password: resp.data.id,
-                    tipoAutenticazione: {
-                        _id: '5be5cef31e7e268637ea41e4'
-                    }
+                    tipoautenticazione: '5be5cefc1e7e268637ea41e5'
                 }
 
                 return user
@@ -96,9 +94,7 @@ var getDataFromChannel = (channel) => {
                     foto_profilo: resp.data.profile_image_url_https.replace("_normal", ""),
                     access_token: resp.data.id,
                     password: resp.data.id,
-                    tipoAutenticazione: {
-                        _id: '5be5cef31e7e268637ea41e4'
-                    }
+                    tipoautenticazione: '5be5cf031e7e268637ea41e6'
                 }
 
                 return user;
@@ -118,9 +114,7 @@ var getDataFromChannel = (channel) => {
                     //foto_profilo: resp.data.image.url,
                     access_token: resp.data.id,
                     password: resp.data.id,
-                    tipoAutenticazione: {
-                        _id: '5be5cef31e7e268637ea41e4'
-                    }
+                    tipoautenticazione: '5be5cef31e7e268637ea41e4'
                 }
 
                 return user
@@ -145,9 +139,7 @@ var getDataFromChannel = (channel) => {
                 foto_profilo_ext: 'jpg',
                 access_token: response.data.id,
                 password: response.data.id,
-                tipoAutenticazione: {
-                    _id: '5be5cef31e7e268637ea41e4'
-                }
+                tipoautenticazione: '5be5cf0b1e7e268637ea41e7'
             }
 
             return user;
@@ -211,17 +203,6 @@ var postProfilePicture = (responseJSON, localProfilePicture) => {
         name: `${responseJSON.id}.jpg`
     });
 
-<<<<<<< HEAD
-    setTimeout(() => {
-        return fetch(APIConsts.apiEndpoint + "/upload", {
-            method: 'POST',
-            body: data
-        }).then(res => {
-            return user
-        })
-        .catch(e => console.error(e))
-    }, 300)
-=======
     return fetch(APIConsts.apiEndpoint + "/upload", {
         method: 'POST',
         body: data
@@ -232,7 +213,6 @@ var postProfilePicture = (responseJSON, localProfilePicture) => {
         return responseJSON
     })
     .catch(e => console.error(e))
->>>>>>> feature/profile-setup
 }
 
 var finalizeUserData = (user) => {
@@ -240,13 +220,9 @@ var finalizeUserData = (user) => {
     .then(result => result.json())
     .then(result => {
         if (result.length == 0) {
-<<<<<<< HEAD
-            return registerNewUser(user);
-=======
              registerNewUser(user)
              .then(result => User.getInstance().user = result)
              .then(() => User.getInstance().registered = true);
->>>>>>> feature/profile-setup
         } else {
             User.getInstance().user = result[0];
             User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
