@@ -1,10 +1,19 @@
-import React, {Component} from 'react';
-import { StyleSheet, Modal,Text, TextInput, View, Image, TouchableHighlight,TouchableOpacity} from 'react-native';
-import CameraRollPicker from 'react-native-camera-roll-picker';
+import React from 'react';
+import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity} from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
+import ImagePicker from 'react-native-image-picker';
+import Feather from 'react-native-vector-icons/Feather'
+
+const options = {
+    title: 'Seleziona',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+};
 
 export default class Settings extends React.Component {
     static navigationOptions = ({navigation}) => {
@@ -27,11 +36,13 @@ export default class Settings extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: User.getInstance().user,
+            user: {
+                ...User.getInstance().user,
+                foto_profilo_changed: false
+            },
             focusedName: false,
             focusedBio: false,
-            modalVisible: false,
-            num:0,
+            num: 0,
             selected:'',
             checkedPrivate: true,
             dataChanged: false
@@ -52,10 +63,6 @@ export default class Settings extends React.Component {
         })
     }
 
-    setModalVisible(visible) {
-        this.setState({modalVisible: visible});
-    }
-    
     hideShowCheck(){
         this.setState({checkedPrivate: !this.state.checkedPrivate})
     }
@@ -78,73 +85,86 @@ export default class Settings extends React.Component {
             this.setState({dataChanged: false})
             User.getInstance().setUser(responseJSON);
             this.props.navigation.state.params.updateParentState()
-        }).catch(e => {
+        }).then(() => {
+            if (this.state.user.foto_profilo_changed) {
+                const data = new FormData();
+                
+                data.append('refId', this.state.user.id);
+                data.append('ref', 'utente');
+                data.append('field', 'foto_profilo');
+                data.append('files', {
+                    uri: this.state.user.foto_profilo,
+                    type: 'image/jpeg', // or photo.type
+                    name: `${this.state.user.id}.jpg`
+                });
+            
+                return fetch(APIConsts.apiEndpoint + "/upload", {
+                    method: 'POST',
+                    body: data
+                }).then((response) => {
+                    return response.json()
+                }).then(response => {
+                    this.setState({user: {
+                            ...this.state.user,
+                            foto_profilo: response[0].url.replace("http://localhost:1337", APIConsts.apiEndpoint)
+                        }
+                    }, () => {
+                        User.getInstance().user.foto_profilo = this.state.user.foto_profilo;
+                        this.props.navigation.state.params.updateParentState()
+                    })
+                })
+                .catch(e => console.error(e))
+            }
+          }).catch(e => {
             console.error(e)
         })
     }
 
-    renderImageSelectedModal() {
-        return (
-            <Modal
-                animationType="none"
-                transparent={false}
-                visible={this.state.modalVisible}
-                onRequestClose={() => {
-                    alert('Modal has been closed.');
-                }}>
-                <TouchableHighlight style={{height:50,backgroundColor:'white'}} onPress={() => {this.setState({modalVisible:false})}}>
-                    <Text style={{color:Colors.main, backgroundColor:'white', fontSize:20, marginLeft:20, marginTop:20, marginBottom:10}}> Cancel </Text>
-                </TouchableHighlight>
-                <CameraRollPicker
-                    callback={this.getSelectedImages.bind(this)}
-                    selectSingleItem={true}
-                    imageMargin={2}
-                    backgroundColor={'white'}
-                />
-                    {this.state.num != 0? this.renderSaveButton(): null}
-            </Modal>
-        )
-    }
-    newImage(){
-        this.setState({
-            image:this.state.selected,
-            modalVisible: false
-        })
-    }
-    getSelectedImages(image, current) {
-        var num = image.length;
-    
-        this.setState({
-          num: num,
-          selected: image,
+    updateAvatar() {
+        ImagePicker.showImagePicker(options, (response) => {
+          if (response.didCancel) {
+            console.log('User cancelled image picker');
+          } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+          } else {
+            const source = { uri: response.uri };
+        
+            this.setState({
+                user: {
+                    ...this.state.user,
+                    foto_profilo: source.uri,
+                    foto_profilo_changed: true
+                }
+            }, () => this.enableSave());
+          }
         });
     }
-
-    renderSaveButton(){
-        return(
-            <TouchableOpacity onPress={() => this.newImage()} style={{backgroundColor:'white', height:50}}>
-                <Text style={{color:Colors.save, fontSize:18, marginLeft:30, marginTop:10}}>Save selected image </Text>
-            </TouchableOpacity>
-        )
-    } 
       
-  render() {
+    render() {
       const {user} = this.state;
 
       return (
         <View style={styles.container}>
-            <View style={{alignItems:'center', borderBottomColor:'#EAECEE', borderBottomWidth:1, paddingBottom:20}}>
-                <Image
-                    style={{width:80, height:80,borderRadius:40}}
-                    source={{uri: user.foto_profilo}} 
-                    />
-                <TouchableOpacity onPress={() => this.setState({modalVisible: true})}>
-                    <Text style={{color: Colors.main, marginLeft: -5, marginTop:10}}>
-                        Change avatar
-                    </Text>
-                    {this.renderImageSelectedModal()} 
-                </TouchableOpacity>
+            {
+                // AVATAR
+            }
+            <View style={{alignItems:'center', borderBottomColor:'#EAECEE', borderBottomWidth:1, justifyContent: 'flex-start', flexDirection: 'column', height: 185}}>
+                <View style={{width: 160, alignSelf: 'center'}}>
+                    <Image
+                        style={{width:150, height:150, borderRadius:75, borderColor: Colors.main, borderWidth: 2, alignSelf: 'center', marginTop: 15 }}
+                        source={{uri: user.foto_profilo}} 
+                        />
+                    <View style={styles.changeAvatar}>
+                        <TouchableOpacity style={styles.touchableChangeAvatar} onPress={() => this.updateAvatar()}>
+                            <Feather name="camera" size={16} color={'white'} style={{alignSelf: 'center'}}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
+
+            {
+                // FIELDS
+            }
             <View style={{flexDirection:'row', paddingTop:10}}>
                 <Text style={{flex:0.6}}>
                     Username
@@ -164,8 +184,6 @@ export default class Settings extends React.Component {
                     }}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    onFocus= {() => this.setState({focusedName: true})}
-                    onBlur= {() => this.setState({focusedName: false})}
                     placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
@@ -179,8 +197,6 @@ export default class Settings extends React.Component {
                     value={'*********'}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    onFocus= {() => this.setState({focusedName: true})}
-                    onBlur= {() => this.setState({focusedName:false})}
                     placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
@@ -205,8 +221,6 @@ export default class Settings extends React.Component {
                     value={user.bio || ''}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    onFocus= {() => this.setState({focusedName: true})}
-                    onBlur= {() => this.setState({focusedName:false})}
                     placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
@@ -220,13 +234,12 @@ export default class Settings extends React.Component {
                     value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    onFocus= {() => this.setState({focusedName: true})}
-                    onBlur= {() => this.setState({focusedName:false})}
                     placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
             </View>
+
             <View style={{flexDirection:'row', paddingTop:20, borderBottomWidth:1, borderBottomColor:'#D5D8DC', paddingBottom:15}}>
 
                 <Text style={{fontSize:15, flex:0.6}}>Visibility</Text>
@@ -253,33 +266,79 @@ export default class Settings extends React.Component {
                     checkedColor={Colors.main}
                 />
             </View>
+
             <View style={{flexDirection:'row', paddingTop:10}}>
                 <Text style={{flex:0.6}}>
                     Facebook
                 </Text>
-                <Text>
-                    facebook.com/leandro90
-                </Text>
-
+                <TextInput
+                    onChangeText={(facebookUsername) => {
+                        this.setState({
+                            user: {
+                                ...this.state.user,
+                                facebookUsername
+                            },
+                            dataChanged: true
+                        });
+                        
+                        this.enableSave()
+                    }}
+                    value={user.facebookUsername || ''}
+                    maxLength = {60}
+                    keyboardAppearance={'default'}
+                    placeholder={this.value}
+                    style={styles.singleInput}
+                    clearButtonMode={'while-editing'}
+                />
             </View>
             <View style={{flexDirection:'row', paddingTop:10}}>
                 <Text style={{flex:0.6}}>
                     Instagram
                 </Text>
-                <Text>
-                    Instagram.com/leandro90
-                </Text>
+                <TextInput
+                    onChangeText={(instagramUsername) => {
+                        this.setState({
+                            user: {
+                                ...this.state.user,
+                                instagramUsername
+                            },
+                            dataChanged: true
+                        });
+                        
+                        this.enableSave()
+                    }}
+                    value={user.instagramUsername || ''}
+                    maxLength = {60}
+                    keyboardAppearance={'default'}
+                    placeholder={this.value}
+                    style={styles.singleInput}
+                    clearButtonMode={'while-editing'}
+                />
 
             </View>
             <View style={{flexDirection:'row', paddingTop:10}}>
                 <Text style={{flex:0.6}}>
                     Twitter
                 </Text>
-                <TouchableOpacity>
-                    <Text style={{color:Colors.main}}>
-                        link accounts
-                    </Text>
-                </TouchableOpacity>
+                <TextInput
+                    onChangeText={(twitterUsername) => {
+                        this.setState({
+                            user: {
+                                ...this.state.user,
+                                twitterUsername
+                            },
+                            dataChanged: true
+                        });
+                        
+                        this.enableSave()
+                    }}
+                    value={user.twitterUsername || ''}
+                    maxLength = {60}
+                    keyboardAppearance={'default'}
+                    placeholder={this.value}
+                    style={styles.singleInput}
+                    clearButtonMode={'while-editing'}
+                />
             </View>
         </View>
     );
@@ -287,27 +346,40 @@ export default class Settings extends React.Component {
   
 }
 
-
-
-
 const styles = StyleSheet.create({
  
-container:{
-    flexDirection:'column',
-    padding:5,
-    backgroundColor:'white',
-    flex:1,
+    container:{
+        flexDirection:'column',
+        padding:5,
+        backgroundColor:'white',
+        flex:1,
 
-},
-singleInput:{
-    backgroundColor:'transparent',
-    borderRadius:5,
-    borderBottomWidth:1,
-    borderColor:'#99A3A4',
-    height:25,
-    padding:5,
-    width:220,
-    marginLeft:20,
-},
+    },
+    singleInput:{
+        backgroundColor:'transparent',
+        borderRadius:5,
+        borderBottomWidth:1,
+        borderColor:'#99A3A4',
+        height:25,
+        padding:5,
+        width:220,
+        marginLeft:20,
+    },
+
+    changeAvatar: {
+        position: 'relative',
+        top: -35,
+        right: -50,
+        justifyContent: 'center',
+        flexDirection: 'row'
+      },
+  
+      touchableChangeAvatar: {
+        height: 32,
+        width: 32,
+        backgroundColor: Colors.main,
+        borderRadius: 16,
+        justifyContent: 'center'
+      },
 
 });

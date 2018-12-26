@@ -130,8 +130,7 @@ export default class MyProfile extends React.Component {
             </Modal>
         )
     }
-    groupsVisibility = () =>{
-    
+    groupsVisibility = () => {
         if(this.state.mygroupsVisible == true)
         {
             this.setState({mygroupsVisible: false})
