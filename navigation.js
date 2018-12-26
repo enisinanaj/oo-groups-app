@@ -257,6 +257,7 @@ export default class MainNavigation extends React.Component {
               });
 
             } else {
+              User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
               this.setState({
                 loading: false,
                 loginInitialRouteName: 'Login',

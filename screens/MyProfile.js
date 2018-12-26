@@ -8,22 +8,19 @@ import Feather from 'react-native-vector-icons/Feather'
 import MyGroupsComponent from '../components/MyGroupsComponent';
 import MyPostsBar from '../components/MyPostsBar';
 import {NavigationSingleton} from './login';
-import Settings from './Settings';
 import CameraRollPicker from 'react-native-camera-roll-picker';
 import CategoryPicker from '../components/CategoryPicker';
 import { CheckBox } from 'react-native-elements';
-import Colors from '../constants/Colors';
-
-
-
+import User from '../controllers/user/instance';
+import APIConsts from '../constants/APIConsts';
 
 
 export default class MyProfile extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return{
-        headerTitle: 'leandrolombardo',
+        headerTitle: User.getInstance().user.username,
         headerRight: (
-            <TouchableOpacity onPress={() => NavigationSingleton.instance.navigate("Settings")} style={{marginRight:10}}>
+            <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={{marginRight:10}}>
                 <Feather name={'settings'} size={20}/>
             </TouchableOpacity>
           ),
@@ -45,6 +42,13 @@ export default class MyProfile extends React.Component {
          }
     }
 
+    componentDidMount() {
+        fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user.id)
+        .then(response => response.json())
+        .then(responseJson => {
+            User.getInstance().user = responseJson;
+        })
+    }
 
     hideShowCheck(){
         this.setState({checkedPrivate: !this.state.checkedPrivate})
@@ -207,35 +211,28 @@ export default class MyProfile extends React.Component {
         )
     }
 
-  render() {
-    
-    return (
-        <ScrollView style={styles.container}>
-             <View style={{alignItems:'center', marginTop:20, marginBottom:10}}>
-                 <ProfilePicture image={require('../images/user.jpg')} />
-            </View>
-            <BioBox/>
-            <View>
-                <Text style={{alignSelf:'center', fontWeight:'bold', fontSize:18, marginTop:10}}>My contacts</Text>
-                <ProfileContacts />
-            </View>
-            <MyGroupsBar iconName={this.state.mygroupsVisible? 'chevron-up' : 'chevron-down'} onPress={this.groupsVisibility}/>
-                {this.state.mygroupsVisible? this.renderMyGroups() : null}
-            <MyPostsBar/>
-            
-        </ScrollView>
-
-                
-        
-    )
-}
+    render() {
+        return (
+            <ScrollView style={styles.container}>
+                <View style={{alignItems:'center', marginTop:20, marginBottom:10}}>
+                    <ProfilePicture image={{uri: User.getInstance().user.foto_profilo}} />
+                </View>
+                <BioBox/>
+                <View>
+                    <Text style={{alignSelf:'center', fontWeight:'bold', fontSize:18, marginTop:10}}>My contacts</Text>
+                    <ProfileContacts />
+                </View>
+                <MyGroupsBar iconName={this.state.mygroupsVisible? 'chevron-up' : 'chevron-down'} onPress={this.groupsVisibility}/>
+                    {this.state.mygroupsVisible? this.renderMyGroups() : null}
+                <MyPostsBar/>
+            </ScrollView>   
+        )
+    }
 }
  
 const styles = StyleSheet.create({
     container: {
-    flex:1,
-    backgroundColor: 'white',
+        flex:1,
+        backgroundColor: 'white',
     },
-
-    
 })
