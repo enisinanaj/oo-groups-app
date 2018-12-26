@@ -1,3 +1,5 @@
+import APIConsts from "../../constants/APIConsts";
+
 var userInstance;
 
 export default class User {
@@ -7,6 +9,11 @@ export default class User {
         }
 
         return userInstance;
+    }
+
+    setUser(user) {
+        this.user = user;
+        this.user.foto_profilo = APIConsts.apiEndpoint + this.user.foto_profilo.url
     }
 
     user = {};

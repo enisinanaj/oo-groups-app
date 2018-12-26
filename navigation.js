@@ -168,7 +168,7 @@ const RNFS = require('react-native-fs');
             return <NotificationComponent/>;
           }
           else if (routeName === 'Profile') {
-            return <IconAvatar smallAvatar={require('./images/profilepicture.jpeg')}/>;
+            return <IconAvatar smallAvatar={{uri: User.getInstance().user.foto_profilo}}/>;
 
           }
 
