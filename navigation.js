@@ -155,7 +155,6 @@ const RNFS = require('react-native-fs');
     navigationOptions: ({ navigation, header }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
-        let iconName;
         if (routeName === 'Home') {
           return <Entypo name={'home'} size={29} color={tintColor} />;
 
@@ -184,8 +183,8 @@ const RNFS = require('react-native-fs');
       inactiveTintColor: 'gray',
       showLabel:false,
     },
-    animationEnabled: false,
-    swipeEnabled: false,
+    animationEnabled: true,
+    swipeEnabled: true
   }
 );
 

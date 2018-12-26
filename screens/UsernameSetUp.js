@@ -6,7 +6,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import ImagePicker from 'react-native-image-picker';
 import APIConsts from '../constants/APIConsts';
 
-// More info on all the options is below in the API Reference... just some common use cases shown here
 const options = {
   title: 'Seleziona',
   storageOptions: {
@@ -124,7 +123,7 @@ export default class UsernameSetUp extends React.Component {
           />
           <View style={styles.changeAvatar}>
             <TouchableOpacity style={styles.touchableChangeAvatar} onPress={() => this.updateAvatar()}>
-              <Feather name="camera" size={22} color={Colors.main} style={{alignSelf: 'center'}}/>
+              <Feather name="camera" size={16} color={'white'} style={{alignSelf: 'center'}}/>
             </TouchableOpacity>
           </View>
           <TextInput
@@ -159,10 +158,10 @@ const styles = StyleSheet.create({
     },
 
     touchableChangeAvatar: {
-      height: 36,
-      width: 36,
-      backgroundColor: 'white',
-      borderRadius: 18,
+      height: 32,
+      width: 32,
+      backgroundColor: Colors.main,
+      borderRadius: 16,
       justifyContent: 'center'
     },
 
@@ -187,6 +186,8 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       height:150,
       marginTop:50,
-      borderRadius:75
+      borderRadius:75,
+      borderColor: Colors.main,
+      borderWidth: 2
     }
 })
