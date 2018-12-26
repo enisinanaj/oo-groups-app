@@ -3,33 +3,84 @@ import { StyleSheet, Modal,Text, TextInput, View, Image, TouchableHighlight,Touc
 import CameraRollPicker from 'react-native-camera-roll-picker';
 import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/Colors';
-
+import User from '../controllers/user/instance';
+import APIConsts from '../constants/APIConsts';
 
 export default class Settings extends React.Component {
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({navigation}) => {
+        const {params= {}} = navigation.state;
+
         return {
-            headerTitle: 'Settings',
+            headerTitle: 'Impostazioni',
+            headerTruncatedBackTitle: 'Indietro',
+            headerRight: (
+                <TouchableOpacity 
+                    disabled={params.disabled != undefined ? params.disabled : true}
+                    onPress={() => params.updateProfile()}
+                    style={{marginRight:10}}>
+                    <Text style={{fontSize: 18, color: params.disabled ? Colors.inactive : Colors.main}}>Salva</Text>
+                </TouchableOpacity>
+            )
         };
-      };
+    };
+    
     constructor(props) {
         super(props);
         this.state = {
+            user: User.getInstance().user,
             focusedName: false,
             focusedBio: false,
             modalVisible: false,
             num:0,
             selected:'',
-            //image:{uri:('../images/fashion.jpeg')},
             checkedPrivate: true,
-
+            dataChanged: false
         }
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({
+            updateProfile: () => this.updateProfile(),
+            disabled: true
+        })
+    }
+
+    enableSave() {
+        this.props.navigation.setParams({
+            updateProfile: () => this.updateProfile(),
+            disabled: false
+        })
     }
 
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
     }
+    
     hideShowCheck(){
         this.setState({checkedPrivate: !this.state.checkedPrivate})
+    }
+
+    updateProfile() {
+        fetch(APIConsts.apiEndpoint + "/utente/" + this.state.user.id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ...this.state.user,
+                id: undefined,
+                tipoautenticazione: undefined,
+                foto_profilo: undefined
+            })
+        }).then(response => {
+            return response.json()
+        }).then(responseJSON => {
+            this.setState({dataChanged: false})
+            User.getInstance().setUser(responseJSON);
+            this.props.navigation.state.params.updateParentState()
+        }).catch(e => {
+            console.error(e)
+        })
     }
 
     renderImageSelectedModal() {
@@ -78,18 +129,14 @@ export default class Settings extends React.Component {
     } 
       
   render() {
-    return (
-        
+      const {user} = this.state;
+
+      return (
         <View style={styles.container}>
-            <TouchableOpacity style={{alignSelf:'flex-end', height:30, paddingRight:10}}>
-                <Text style={{color: Colors.main, fontSize:16}}>
-                    Done
-                </Text>
-            </TouchableOpacity>
             <View style={{alignItems:'center', borderBottomColor:'#EAECEE', borderBottomWidth:1, paddingBottom:20}}>
                 <Image
                     style={{width:80, height:80,borderRadius:40}}
-                    source={require('../images/user.jpg')} 
+                    source={{uri: user.foto_profilo}} 
                     />
                 <TouchableOpacity onPress={() => this.setState({modalVisible: true})}>
                     <Text style={{color: Colors.main, marginLeft: -5, marginTop:10}}>
@@ -103,11 +150,22 @@ export default class Settings extends React.Component {
                     Username
                 </Text>
                 <TextInput
-                    value={'Leandro90'}
+                    value={user.username}
+                    onChangeText={(username) => {
+                        this.setState({
+                            user: {
+                                ...this.state.user,
+                                username
+                            },
+                            dataChanged: true
+                        });
+                       
+                        this.enableSave()
+                    }}
                     maxLength = {60}
-                    keyboardAppearance={true}
+                    keyboardAppearance={'default'}
                     onFocus= {() => this.setState({focusedName: true})}
-                    onBlur= {() => this.setState({focusedName:false})}
+                    onBlur= {() => this.setState({focusedName: false})}
                     placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
@@ -120,7 +178,7 @@ export default class Settings extends React.Component {
                 <TextInput
                     value={'*********'}
                     maxLength = {60}
-                    keyboardAppearance={true}
+                    keyboardAppearance={'default'}
                     onFocus= {() => this.setState({focusedName: true})}
                     onBlur= {() => this.setState({focusedName:false})}
                     placeholder={this.value}
@@ -133,9 +191,20 @@ export default class Settings extends React.Component {
                     Bio
                 </Text>
                 <TextInput
-                    value={'I love this app!'}
+                    onChangeText={(bio) => {
+                        this.setState({
+                            user: {
+                                ...this.state.user,
+                                bio
+                            },
+                            dataChanged: true
+                        });
+                        
+                        this.enableSave()
+                    }}
+                    value={user.bio || ''}
                     maxLength = {60}
-                    keyboardAppearance={true}
+                    keyboardAppearance={'default'}
                     onFocus= {() => this.setState({focusedName: true})}
                     onBlur= {() => this.setState({focusedName:false})}
                     placeholder={this.value}
@@ -148,9 +217,9 @@ export default class Settings extends React.Component {
                     E-mail
                 </Text>
                 <TextInput
-                    value={'leandro90@example.com'}
+                    value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
                     maxLength = {60}
-                    keyboardAppearance={true}
+                    keyboardAppearance={'default'}
                     onFocus= {() => this.setState({focusedName: true})}
                     onBlur= {() => this.setState({focusedName:false})}
                     placeholder={this.value}
@@ -211,10 +280,7 @@ export default class Settings extends React.Component {
                         link accounts
                     </Text>
                 </TouchableOpacity>
-                
-
             </View>
-
         </View>
     );
   }

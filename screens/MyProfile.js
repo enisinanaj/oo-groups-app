@@ -16,20 +16,26 @@ import APIConsts from '../constants/APIConsts';
 
 
 export default class MyProfile extends React.Component {
-    static navigationOptions = ({ navigation }) => {
+    static navigationOptions = ({navigation}) => {
+        let {params = {}} = navigation.state;
+        let foo = () => {}
+        let updateParentState = params.updateParentState != undefined ? params.updateParentState : foo
+        
         return{
-        headerTitle: User.getInstance().user.username,
-        headerRight: (
-            <TouchableOpacity onPress={() => navigation.navigate("Settings")} style={{marginRight:10}}>
-                <Feather name={'settings'} size={20}/>
-            </TouchableOpacity>
-          ),
+            headerTitle: params.user != undefined ? params.user.username : 'Profilo',
+            headerRight: (
+                <TouchableOpacity onPress={() => navigation.navigate("Settings", {updateParentState: () => updateParentState()})} style={{marginRight:15}}>
+                    <Feather name={'settings'} size={24}/>
+                </TouchableOpacity>
+            )
         };
-      };
+    };
+
     constructor(props) {
         super(props);
     
         this.state = {
+            user: User.getInstance().user,
             mygroupsVisible:false,
             modalVisible: false,
             mediaModalVisibe:false,
@@ -43,10 +49,25 @@ export default class MyProfile extends React.Component {
     }
 
     componentDidMount() {
+        this.props.navigation.setParams({
+            updateParentState: () => this.updateState(),
+            user: this.state.user
+        });
+    }
+
+    updateState() {
+        console.warn("state updated");
+        
         fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user.id)
         .then(response => response.json())
-        .then(responseJson => {
-            User.getInstance().user = responseJson;
+        .then(responseJSON => {
+            User.getInstance().setUser(responseJSON);
+            this.setState({user: User.getInstance().user}, () => {
+                this.props.navigation.setParams({
+                    updateParentState: () => this.updateState(),
+                    user: this.state.user
+                });
+            })
         })
     }
 
