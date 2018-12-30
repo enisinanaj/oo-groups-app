@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
+import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import User from '../controllers/user/instance';
@@ -62,7 +62,8 @@ export default class Settings extends React.Component {
             num: 0,
             selected:'',
             checkedPrivate: true,
-            dataChanged: false
+            dataChanged: false,
+            isLoading: false
         }
     }
 
@@ -85,6 +86,7 @@ export default class Settings extends React.Component {
     }
 
     updateProfile() {
+        this.setState({isLoading: true});
         fetch(APIConsts.apiEndpoint + "/utente/" + this.state.user.id, {
             method: 'PUT',
             headers: {
@@ -103,21 +105,22 @@ export default class Settings extends React.Component {
             this.setState({dataChanged: false})
             User.getInstance().setUser(responseJSON);
             this.props.navigation.state.params.updateParentState()
-        }).then(() => {
-            this.manageFotoProfilo()
+        }).then((next) => {
+            return this.manageFotoProfilo(next)
         })
-        .then(() => {
-            this.manageFotoCopertina()
+        .then((next) => {
+            return this.manageFotoCopertina(next)
         })
         .then(() => {
             this.updateUserContacts()
         })
+        .then(() => this.setState({isLoading: false}))
         .catch(e => {
             console.error(e)
         })
     }
 
-    manageFotoProfilo() {
+    manageFotoProfilo(next) {
         if (this.state.user.foto_profilo_changed) {
             const data = new FormData();
             
@@ -146,10 +149,12 @@ export default class Settings extends React.Component {
                 })
             })
             .catch(e => console.error(e))
+        } else {
+            return next;
         }
     }
 
-    manageFotoCopertina() {
+    manageFotoCopertina(next) {
         if (this.state.user.foto_copertina_changed) {
             const data = new FormData();
             
@@ -178,6 +183,8 @@ export default class Settings extends React.Component {
                 })
             })
             .catch(e => console.error(e))
+        } else {
+            return next
         }
     }
 
@@ -221,6 +228,7 @@ export default class Settings extends React.Component {
                         url: contacts[key].url
                     })
                 }).then(() => {
+                    this.setState({isLoading: false})
                     this.props.navigation.state.params.updateParentState()
                 }).catch(e => console.error(e))
             })
@@ -283,6 +291,13 @@ export default class Settings extends React.Component {
             {
                 // AVATAR
             }
+            {this.state.isLoading ?
+                <View style={styles.laodingWindow}>
+                    <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                        <ActivityIndicator size={"large"} />
+                    </View>
+                </View>
+            : null }
             <View style={{alignItems:'center', borderBottomColor:'#EAECEE', borderBottomWidth:1, justifyContent: 'flex-start', flexDirection: 'column', height: 185}}>
                 <Image source={{uri: this.state.user.foto_copertina == null ? '' : this.state.user.foto_copertina}} 
                     style={styles.coverImage} />
@@ -471,6 +486,7 @@ const styles = StyleSheet.create({
 
     },
 
+    laodingWindow: {flex: 1, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'rgba(250,250,250, 0.7)', flexDirection: 'column', justifyContent: 'center'},
     avatarHalo: {width: 160, height: 160, alignSelf: 'center', padding: 5, borderRadius: 80, marginTop: 10, backgroundColor: 'rgba(250,250,250,0.6)'},
 
     sectionHeader: {

@@ -1,3 +1,5 @@
+import {StyleSheet} from 'react-native'
+
 const Colors = {
     main: '#002bff',
     inactive:'#808B96',
@@ -39,3 +41,16 @@ export const Shadow = {
     },
 
 }
+
+export const GlobalStyles = StyleSheet.create({
+    btn: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 25,
+        paddingVertical: 15,
+        backgroundColor: Colors.accent1,
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: 30
+    }
+});

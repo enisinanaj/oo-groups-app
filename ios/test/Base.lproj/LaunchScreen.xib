@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,14 +15,24 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="SplashScreen" translatesAutoresizingMaskIntoConstraints="NO" id="2Rt-1K-Sck">
-                    <rect key="frame" x="-9" y="108" width="498" height="265"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="andrej-lisakov-551627-unsplash" translatesAutoresizingMaskIntoConstraints="NO" id="h02-wY-TgN">
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
                 </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Twadle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FP0-NS-0CU">
+                    <rect key="frame" x="163" y="88" width="154" height="65"/>
+                    <fontDescription key="fontDescription" type="system" weight="thin" pointSize="54"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="2Rt-1K-Sck" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="5dH-Jt-Avd"/>
-                <constraint firstItem="2Rt-1K-Sck" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="JF8-EQ-hQ6"/>
+                <constraint firstItem="h02-wY-TgN" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="22V-l3-2cr"/>
+                <constraint firstItem="FP0-NS-0CU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="88" id="3ZN-fK-TP5"/>
+                <constraint firstItem="FP0-NS-0CU" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="ArR-MD-0gL"/>
+                <constraint firstItem="h02-wY-TgN" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="QYU-v9-JC9"/>
+                <constraint firstItem="h02-wY-TgN" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="tds-eO-shG"/>
+                <constraint firstItem="h02-wY-TgN" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="vMP-LS-aDZ"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -30,6 +40,6 @@
         </view>
     </objects>
     <resources>
-        <image name="SplashScreen" width="1201" height="1152"/>
+        <image name="andrej-lisakov-551627-unsplash" width="4000" height="6000"/>
     </resources>
 </document>
