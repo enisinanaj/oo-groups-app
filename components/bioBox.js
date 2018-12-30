@@ -14,23 +14,17 @@ export default class BioBox extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <Text style={{fontSize:20, fontWeight:'bold', alignSelf:'center', marginTop:5}}>Me out of groups</Text>  
-                <Text style={{fontSize:17, marginTop:5}}>{User.getInstance().user.bio}</Text>        
-            </View>
+            <Text style={[styles.text, this.props.style]}>{User.getInstance().user.bio}</Text>        
         );
     }  
 }
 
 const styles = StyleSheet.create({
- 
-    container:{
-        flexDirection:'column',
-        borderTopWidth:1,
-        borderBottomWidth:1,
-        borderColor:'#CCD1D1',
-        padding:10,
-        marginTop:10,
-    },
+
+    text: {
+        fontSize:14,
+        color: '#8b8b8b',
+        textAlign: 'center'
+    }
 
 });

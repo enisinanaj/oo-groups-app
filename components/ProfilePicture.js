@@ -10,9 +10,10 @@ export default class ProfilePicture extends React.Component {
 
   render() {
     return (
-
         <View style={styles.container}>
-            <Image style={{width:150, height:150,borderRadius:75}} source={this.props.image}/>
+            <View style={{width: 130, height:130, backgroundColor: 'rgba(250,250,250, 0.4)', padding: 5, borderRadius: 64}}>
+                <Image style={{width:120, height:120, borderRadius:60}} source={this.props.image}/>
+            </View>
         </View>
     );
   }
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
  
 container:{
     justifyContent:'center',
+    flexDirection: 'row'
 },
 
 });

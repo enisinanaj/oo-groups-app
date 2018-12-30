@@ -6,6 +6,7 @@ import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
 import ImagePicker from 'react-native-image-picker';
 import Feather from 'react-native-vector-icons/Feather'
+import ContactTypes from '../constants/ContactTypes';
 
 const options = {
     title: 'Seleziona',
@@ -35,11 +36,26 @@ export default class Settings extends React.Component {
     
     constructor(props) {
         super(props);
+
+        let contacts = {
+            facebookUsername : {changed: false},
+            twitterUsername: {changed: false},
+            instagramUsername: {changed: false}
+        };
+
+        User.getInstance().user.contatti.forEach(contatto => {
+            contacts[ContactTypes.getNameForKey(contatto.tipocontatti)] = {
+                url: contatto.url,
+                id: contatto.id
+            }
+        })
+
         this.state = {
             user: {
                 ...User.getInstance().user,
                 foto_profilo_changed: false
             },
+            contacts,
             focusedName: false,
             focusedBio: false,
             num: 0,
@@ -115,9 +131,59 @@ export default class Settings extends React.Component {
                 })
                 .catch(e => console.error(e))
             }
-          }).catch(e => {
+          })
+          .then(() => {
+              this.updateUserContacts()
+          })
+          .catch(e => {
             console.error(e)
         })
+    }
+
+    updateUserContacts() {
+        const {contacts} = this.state;
+        const contactKeys = Object.keys(contacts);
+
+        if (contactKeys.length > 0) {
+            contactKeys.forEach(key => {
+                if (!contacts[key].changed) {
+                    return;
+                }
+
+                if (contacts[key].id != undefined) {
+                    // is update or delete
+                    if (contacts[key].url == "") {
+                        //is delete
+                        console.warn("DELETE: " + APIConsts.apiEndpoint + "/contatti/" + contacts[key].id);
+
+                        fetch(APIConsts.apiEndpoint + "/contatti/" + contacts[key].id, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }).then(() => {
+                            this.props.navigation.state.params.updateParentState()
+                        }).catch(e => console.error(e))
+
+                        return;
+                    }
+                }
+
+                fetch(APIConsts.apiEndpoint + "/contatti" + (contacts[key].id != undefined ? `/${contacts[key].id}` : ''), {
+                    method: contacts[key].id != undefined ? `PUT` : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tipocontatti: ContactTypes.getKeyFromName(key),
+                        utente: this.state.user.id,
+                        url: contacts[key].url
+                    })
+                }).then(() => {
+                    this.props.navigation.state.params.updateParentState()
+                }).catch(e => console.error(e))
+            })
+        }
     }
 
     updateAvatar() {
@@ -139,9 +205,17 @@ export default class Settings extends React.Component {
           }
         });
     }
+
+    updateUserContactInState(type, value) {
+        let {contacts} = this.state;
+        contacts[ContactTypes.getNameForKey(type)].url = value;
+        contacts[ContactTypes.getNameForKey(type)].changed = true;
+
+        this.enableSave();
+    }
       
     render() {
-      const {user} = this.state;
+      const {user, contacts} = this.state;
 
       return (
         <View style={styles.container}>
@@ -184,7 +258,6 @@ export default class Settings extends React.Component {
                     }}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
@@ -197,7 +270,6 @@ export default class Settings extends React.Component {
                     value={'*********'}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
@@ -221,7 +293,6 @@ export default class Settings extends React.Component {
                     value={user.bio || ''}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
@@ -234,7 +305,6 @@ export default class Settings extends React.Component {
                     value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
@@ -273,20 +343,12 @@ export default class Settings extends React.Component {
                 </Text>
                 <TextInput
                     onChangeText={(facebookUsername) => {
-                        this.setState({
-                            user: {
-                                ...this.state.user,
-                                facebookUsername
-                            },
-                            dataChanged: true
-                        });
-                        
-                        this.enableSave()
+                        this.updateUserContactInState(ContactTypes.FACEBOOK, facebookUsername)
                     }}
-                    value={user.facebookUsername || ''}
+                    value={contacts.facebookUsername.url}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
+                    placeholder={"https://facebook.com/..."}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
@@ -297,20 +359,12 @@ export default class Settings extends React.Component {
                 </Text>
                 <TextInput
                     onChangeText={(instagramUsername) => {
-                        this.setState({
-                            user: {
-                                ...this.state.user,
-                                instagramUsername
-                            },
-                            dataChanged: true
-                        });
-                        
-                        this.enableSave()
+                        this.updateUserContactInState(ContactTypes.INSTAGRAM, instagramUsername)
                     }}
-                    value={user.instagramUsername || ''}
+                    value={contacts.instagramUsername.url}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
+                    placeholder={"https://instagram.com/..."}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />
@@ -322,20 +376,12 @@ export default class Settings extends React.Component {
                 </Text>
                 <TextInput
                     onChangeText={(twitterUsername) => {
-                        this.setState({
-                            user: {
-                                ...this.state.user,
-                                twitterUsername
-                            },
-                            dataChanged: true
-                        });
-                        
-                        this.enableSave()
+                        this.updateUserContactInState(ContactTypes.TWITTER, twitterUsername)
                     }}
-                    value={user.twitterUsername || ''}
+                    value={contacts.twitterUsername.url}
                     maxLength = {60}
                     keyboardAppearance={'default'}
-                    placeholder={this.value}
+                    placeholder={"https://twitter.com/..."}
                     style={styles.singleInput}
                     clearButtonMode={'while-editing'}
                 />

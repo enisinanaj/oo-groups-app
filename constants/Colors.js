@@ -6,7 +6,12 @@ const Colors = {
     backgroundColor:'#F9F9F9',
     alert:'#EC7063',
     profileBorder:'#CCD1D1',
-    darkBorder: '#AAA'
+    darkBorder: '#AAA',
+    darkGrey: '#4a4a4a',
+    darkTitle: '#4e4e4e',
+    accent1: '#FF671B',
+    lightGreyBackground: '#F5F5F5',
+    lighterText: '#8b8b8b'
 }
 
 export default Colors;

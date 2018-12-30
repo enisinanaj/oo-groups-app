@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import SmallAvatar from './SmallAvatar';
+import {StyleSheet, Image, Text, View, TouchableOpacity, Dimensions} from 'react-native';
 import RatingStar from './ratingStar';
+import Colors from '../constants/Colors';
 
+const {width} = Dimensions.get('window')
 
 export default class MyGroupsComponent extends React.Component {
     constructor(props) {
@@ -12,6 +13,7 @@ export default class MyGroupsComponent extends React.Component {
             groupname:this.props.groupname,
             rating:this.props.rating,
             role:this.props.role,
+            numeroIscritti: this.props.memberCount
          }
     }
 
@@ -21,19 +23,25 @@ export default class MyGroupsComponent extends React.Component {
     return (
 
         <View style={styles.container}>
+            <Image source={this.props.smallAvatar} style={[styles.groupCover, {resizeMode: 'cover'}]}></Image>
             
-            <View style={{marginTop:5,flexDirection:'row', marginLeft:5, flex:0.6}}>
-                <SmallAvatar smallAvatar={this.props.smallAvatar}/>
-                <TouchableOpacity  onPress={() => this.props.onPress()} style={{alignSelf:'center',marginLeft:5}}>
-                    <Text style={{fontSize:14, marginTop:-5}}>{this.state.groupname}</Text>
+            <View style={{flexDirection: 'column', marginLeft: 15, marginRight: 0, justifyContent: 'space-between', paddingVertical: 10}}>
+                <TouchableOpacity  onPress={() => this.props.onPress()} style={{}}>
+                    <Text style={{fontSize:18, fontWeight: '500', color: Colors.darkTitle}}>{this.state.groupname}</Text>
                 </TouchableOpacity>
+                <View>
+                    <View style={{marginTop: 10, flexDirection: 'row', justifyContent: 'flex-start'}}>
+                        <Text style={{color: Colors.lighterText, marginRight: 15}}>Membri</Text>
+                        <Text style={{color: Colors.darkTitle}}>{this.state.numeroIscritti}</Text>
+                    </View>
+                    <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                        <Text style={{color: Colors.lighterText, marginRight: 15}}>Ruolo</Text>
+                        <Text style={{color: Colors.darkTitle}}>{this.state.role}</Text>
+                    </View>
+                </View>
             </View>
-            <View style={{borderLeftWidth:1, flex:0.2, paddingTop:5, borderRightWidth:1, borderColor:'#CCD1D1', paddingLeft:15}}>
-                <RatingStar rating={this.state.rating}/>
-            </View>
-            <View style={{alignSelf:'center',flex:0.2, paddingLeft:30}}>
-                <Text>{this.state.role}</Text>
-            </View>
+            
+            <RatingStar style={{position: 'absolute', top: 10, right: 10}} rating={this.state.rating}/>
 
         </View>
             
@@ -44,9 +52,21 @@ export default class MyGroupsComponent extends React.Component {
 const styles = StyleSheet.create({
     container:{
         flexDirection:'row',
-        height:60,
-        borderBottomWidth:1, 
-        borderColor:'#CCD1D1',
+        justifyContent: 'flex-start',
+        height:130,
+        borderRadius: 20,
+        padding: 10,
+        flex: 1,
+        marginHorizontal: 20,
+        marginVertical: 5,
+        backgroundColor: Colors.lightGreyBackground
     },
     
+    groupCover: {
+        borderRadius: 20,
+        height: 110,
+        width: 110,
+        marginVertical: 0,
+        marginBottom: 5
+    }
 })

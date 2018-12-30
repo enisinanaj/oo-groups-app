@@ -1,10 +1,9 @@
-import React, {Component} from 'react';
-import {StyleSheet,Text, Modal, ScrollView, View, Image, TextInput, TouchableHighlight,TouchableOpacity} from 'react-native';
+import React from 'react';
+import {StyleSheet, StatusBar,Text, Modal, ScrollView, View, Image, TextInput, TouchableHighlight,TouchableOpacity} from 'react-native';
 import ProfilePicture from '../components/ProfilePicture';
 import BioBox from '../components/bioBox';
 import ProfileContacts from '../components/ProfileContacts';
 import MyGroupsBar from '../components/MyGroupsBar';
-import Feather from 'react-native-vector-icons/Feather'
 import MyGroupsComponent from '../components/MyGroupsComponent';
 import MyPostsBar from '../components/MyPostsBar';
 import {NavigationSingleton} from './login';
@@ -13,6 +12,8 @@ import CategoryPicker from '../components/CategoryPicker';
 import { CheckBox } from 'react-native-elements';
 import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
+import Feather from 'react-native-vector-icons/Feather'
+import Colors from '../constants/Colors';
 
 
 export default class MyProfile extends React.Component {
@@ -21,13 +22,14 @@ export default class MyProfile extends React.Component {
         let foo = () => {}
         let updateParentState = params.updateParentState != undefined ? params.updateParentState : foo
         
-        return{
-            headerTitle: params.user != undefined ? params.user.username : 'Profilo',
-            headerRight: (
-                <TouchableOpacity onPress={() => navigation.navigate("Settings", {updateParentState: () => updateParentState()})} style={{marginRight:15}}>
-                    <Feather name={'settings'} size={24}/>
-                </TouchableOpacity>
-            )
+        return {
+            header: null
+            // headerTitle: params.user != undefined ? params.user.username : 'Profilo',
+            // headerRight: (
+            //     <TouchableOpacity onPress={() => navigation.navigate("Settings", {updateParentState: () => updateParentState()})} style={{marginRight:15}}>
+            //         <Feather name={'settings'} size={24}/>
+            //     </TouchableOpacity>
+            // )
         };
     };
 
@@ -55,9 +57,7 @@ export default class MyProfile extends React.Component {
         });
     }
 
-    updateState() {
-        console.warn("state updated");
-        
+    updateState() {        
         fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user.id)
         .then(response => response.json())
         .then(responseJSON => {
@@ -144,11 +144,6 @@ export default class MyProfile extends React.Component {
     renderMyGroups(){
         return (
             <View style={{flex:1}}>
-                <TouchableOpacity onPress={() => {this.setModalVisible(!this.state.modalVisible);}} style={{borderBottomWidth:1, borderColor:'#CCD1D1',}}>
-                    <Text style={{ color:'red', margin:10, alignSelf:'flex-end'}}>
-                        Create new group
-                    </Text>
-                </TouchableOpacity>
                 <Modal
                     animationType="none"
                     transparent={false}
@@ -222,30 +217,53 @@ export default class MyProfile extends React.Component {
                         </TouchableOpacity>
                     </View>
                 </Modal>
-                <MyGroupsComponent smallAvatar={require('../images/soccercup.jpeg')} onPress={() => NavigationSingleton.instance.navigate("MemberView")} groupname={'Calccio'} rating={'10'} role={'Admin'}/>
-                <MyGroupsComponent smallAvatar={require('../images/robot.jpeg')} groupname={'Tech'} rating={' 5'} role={'Member'}/>
-                <MyGroupsComponent smallAvatar={require('../images/tree.jpeg')} groupname={'Nature'} rating={' 5'} role={'Member'}/>
-                <MyGroupsComponent smallAvatar={require('../images/fashion.jpeg')} groupname={'OOTD'} rating={' 5'} role={'Member'}/>
-                <MyGroupsComponent smallAvatar={require('../images/stadium.jpeg')} groupname={'calciatoribrutticlub'} rating={' 5'} role={'Member'}/>
+                <MyGroupsComponent smallAvatar={require('../images/soccercup.jpeg')} onPress={() => NavigationSingleton.instance.navigate("MemberView")} groupname={'Calcio'} rating={'10'} role={'Admin'} memberCount={"13M"}/>
+                <MyGroupsComponent smallAvatar={require('../images/robot.jpeg')} groupname={'Tech'} rating={' 5'} role={'Member'} memberCount={"22K"}/>
+                <MyGroupsComponent smallAvatar={require('../images/tree.jpeg')} groupname={'Nature'} rating={' 5'} role={'Member'} memberCount={"132K"}/>
+                <MyGroupsComponent smallAvatar={require('../images/fashion.jpeg')} groupname={'OOTD'} rating={' 5'} role={'Member'} memberCount={"760K"}/>
+                <MyGroupsComponent smallAvatar={require('../images/stadium.jpeg')} groupname={'calciatoribrutticlub'} rating={' 5'} role={'Member'} memberCount={"20K"}/>
             </View>
         )
     }
 
     render() {
         return (
-            <ScrollView style={styles.container}>
-                <View style={{alignItems:'center', marginTop:20, marginBottom:10}}>
-                    <ProfilePicture image={{uri: User.getInstance().user.foto_profilo}} />
+            <ScrollView style={{backgroundColor: 'white'}}>
+                <StatusBar barStyle={'light-content'} />
+                <View style={styles.profileIntro}>
+                    <Image style={styles.coverImage} 
+                        source={{uri: 'https://images.unsplash.com/photo-1500993855538-c6a99f437aa7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'}} />
+                    <View style={styles.headerBar}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                            <View style={{marginLeft: 10, width: 30}}></View>
+                            <Text style={{color: 'white', fontWeight: '800', textAlign: 'center'}}>@{this.state.user.username}</Text>
+                            <TouchableOpacity style={{marginRight: 10, width: 30}}
+                                onPress={() => this.props.navigation.navigate("Settings", {updateParentState: () => this.updateState()})}>
+                                <Feather name={'settings'} size={24} color={'white'}/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={{marginTop: 80}}>
+                        <ProfilePicture image={{uri: User.getInstance().user.foto_profilo}} />
+                        <View style={{padding: 10}}>
+                            <Text style={styles.username}>{this.state.user.username}</Text>
+                            <BioBox style={{marginBottom: 10}} />
+                            <ProfileContacts />
+                        </View>
+                    </View>
                 </View>
-                <BioBox/>
-                <View>
-                    <Text style={{alignSelf:'center', fontWeight:'bold', fontSize:18, marginTop:10}}>My contacts</Text>
-                    <ProfileContacts />
-                </View>
-                <MyGroupsBar iconName={this.state.mygroupsVisible? 'chevron-up' : 'chevron-down'} onPress={this.groupsVisibility}/>
+                <MyGroupsBar iconName={this.state.mygroupsVisible? 'minus' : 'plus'} label={this.state.mygroupsVisible? 'nascondi' : 'visualizza'} onPress={this.groupsVisibility}/>
                     {this.state.mygroupsVisible? this.renderMyGroups() : null}
-                <MyPostsBar/>
-            </ScrollView>   
+                {/* <MyPostsBar/> */}
+                <View style={{marginTop: 15, marginBottom: 20}}>
+                    <TouchableOpacity style={{flexDirection: 'row', justifyContent: 'space-between',
+                        paddingHorizontal: 25, paddingVertical: 15, backgroundColor: Colors.accent1, marginLeft: 10, marginRight: 10, borderRadius: 30}}>
+                        <Feather name={"plus"} size={22} color={'white'}/>
+                        <Text style={{color: 'white', fontSize: 16}}>Crea un nuovo gruppo</Text>
+                        <View style={{width: 30}} />
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         )
     }
 }
@@ -255,4 +273,34 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor: 'white',
     },
+    coverImage: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 160
+    },
+    headerBar: {
+        top: 20,
+        left: 0,
+        right: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        height: 44
+    },
+    username: {
+        fontSize: 24,
+        marginTop: 5,
+        color: '#4e4e4e',
+        marginBottom: 10,
+        textAlign: 'center',
+        marginBottom: 20
+    },
+    profileIntro: {
+        justifyContent: 'center',
+        flexDirection: 'column',
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginBottom: 20
+    }
 })

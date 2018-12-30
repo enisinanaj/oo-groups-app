@@ -13,7 +13,10 @@ export default class User {
 
     setUser(user) {
         this.user = user;
-        this.user.foto_profilo = APIConsts.apiEndpoint + this.user.foto_profilo.url
+
+        if (typeof this.user.foto_profilo == 'object') {
+            this.user.foto_profilo = APIConsts.apiEndpoint + this.user.foto_profilo.url
+        }
     }
 
     user = {};

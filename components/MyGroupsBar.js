@@ -4,6 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Colors from '../constants/Colors';
 
 
 export default class MyGroupsBar extends React.Component {
@@ -17,11 +18,12 @@ export default class MyGroupsBar extends React.Component {
     return (
 
         <View style={styles.container}>
-            <View style={{justifyContent:'center', width:150}}>
-                <Text style={{fontSize:18,fontWeight:'bold', marginRight:10}}>My groups</Text>
+            <View>
+                <Text style={{fontSize:18, color: Colors.darkTitle}}>I miei gruppi</Text>
             </View>
-            <TouchableOpacity onPress={() => this.props.onPress()}>
-                <Entypo style={{justifyContent:'flex-end'}} name={this.props.iconName} size={25} color={'gray'}/>
+            <TouchableOpacity onPress={() => this.props.onPress()} style={{flexDirection: 'row'}}>
+                <Text style={{marginRight: 5, fontSize: 11, color: Colors.lighterText, marginTop: 4}}>{this.props.label}</Text>
+                <Entypo style={{justifyContent:'flex-end'}} name={this.props.iconName} size={22} color={Colors.darkGrey}/>
             </TouchableOpacity>
        </View>
     );
@@ -35,11 +37,8 @@ export default class MyGroupsBar extends React.Component {
 const styles = StyleSheet.create({
  
 container:{
-    paddingLeft:110,
-    paddingRight:20,
-    borderBottomWidth:1, 
-    borderColor:'#CCD1D1',
-    paddingBottom:10,
+    paddingLeft: 20,
+    paddingRight: 20,
     flexDirection:'row',
     justifyContent:'space-between'
 },

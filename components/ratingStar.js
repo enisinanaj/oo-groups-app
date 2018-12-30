@@ -4,6 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
+import Colors from '../constants/Colors';
 
 
 export default class RatingStar extends React.Component {
@@ -17,24 +18,12 @@ export default class RatingStar extends React.Component {
 
 
   render() {
-    return (
-
-        <View>
-            <FontAwesome style={{justifyContent:'flex-end'}}name={'star'} size={50} color={'black'}/>
-            <Text style={{fontSize:18, position:'absolute', marginTop:13, color:'white',fontWeight:'bold', marginLeft:13}}>{this.state.rating}</Text>
-       </View>
-    );
-  }
-  
+        const {style = {}} = this.props;
+        return (
+            <View style={style}>
+                <FontAwesome name={'star'} size={26} color={Colors.lighterText}/>
+                <Text style={{fontSize:9, position:'absolute', marginTop:8, color:'white',fontWeight:'bold', marginLeft:6}}>{this.state.rating}</Text>
+            </View>
+        );
+  } 
 }
-
-
-
-
-const styles = StyleSheet.create({
- 
-container:{
-
-},
-
-});
