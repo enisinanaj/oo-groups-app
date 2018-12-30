@@ -3,7 +3,6 @@ import {View, ActivityIndicator} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo'
 import { TabNavigator, TabBarBottom, createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
-import { StackNavigator } from 'react-navigation';
 import Login from './screens/login';
 import Terms from './screens/terms';
 import MyProfile from './screens/MyProfile';
@@ -31,7 +30,7 @@ import APIConsts from './constants/APIConsts';
 
 const RNFS = require('react-native-fs');
 
-  const HomeStack = StackNavigator(
+  const HomeStack = createStackNavigator(
     {
       Home: {
         screen: HomeFeed,
@@ -55,7 +54,7 @@ const RNFS = require('react-native-fs');
     }
   );
 
-  const ProfileStack = StackNavigator(
+  const ProfileStack = createStackNavigator(
     {
       Profile:{
           screen: MyProfile,
@@ -84,7 +83,7 @@ const RNFS = require('react-native-fs');
     }
   );
 
-  const GroupsStack = StackNavigator(
+  const GroupsStack = createStackNavigator(
     {
     MyGroups:{
         screen: MyGroups,
@@ -95,7 +94,7 @@ const RNFS = require('react-native-fs');
     }
   )
 
-  const NotificationsStack = StackNavigator(
+  const NotificationsStack = createStackNavigator(
   {
       Notifications:{
           screen: NotificationsScreen,
@@ -106,7 +105,7 @@ const RNFS = require('react-native-fs');
     }
   )
   
-  const PostStack = StackNavigator(
+  const PostStack = createStackNavigator(
     {
       Posts:{
           screen: Posts,
@@ -237,7 +236,7 @@ export default class MainNavigation extends React.Component {
         .then(response => response.json())
         .then(responseJson => {
           if (responseJson.length > 0) {
-            User.getInstance().user = responseJson[0];
+            User.getInstance().setUser(responseJson[0]);
             
             if (User.getInstance().user.tos_accettato == false) {
               this.setState({
@@ -249,14 +248,12 @@ export default class MainNavigation extends React.Component {
               || User.getInstance().user.username == undefined 
               || User.getInstance().user.username == "" ) {
 
-              User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
               this.setState({
                 loading: false,
                 loginInitialRouteName: 'UsernameSetUp',
               });
 
             } else {
-              User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
               this.setState({
                 loading: false,
                 loginInitialRouteName: 'Login',

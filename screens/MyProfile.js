@@ -18,9 +18,9 @@ import Colors from '../constants/Colors';
 
 export default class MyProfile extends React.Component {
     static navigationOptions = ({navigation}) => {
-        let {params = {}} = navigation.state;
-        let foo = () => {}
-        let updateParentState = params.updateParentState != undefined ? params.updateParentState : foo
+        // let {params = {}} = navigation.state;
+        // let foo = () => {}
+        // let updateParentState = params.updateParentState != undefined ? params.updateParentState : foo
         
         return {
             header: null
@@ -55,20 +55,23 @@ export default class MyProfile extends React.Component {
             updateParentState: () => this.updateState(),
             user: this.state.user
         });
+
+        this.updateState();
     }
 
-    updateState() {        
+    updateState() {
         fetch(APIConsts.apiEndpoint + "/utente/" + User.getInstance().user.id)
         .then(response => response.json())
         .then(responseJSON => {
             User.getInstance().setUser(responseJSON);
+
             this.setState({user: User.getInstance().user}, () => {
                 this.props.navigation.setParams({
                     updateParentState: () => this.updateState(),
                     user: this.state.user
                 });
             })
-        })
+        }).catch(e => console.error(e))
     }
 
     hideShowCheck(){
@@ -229,10 +232,10 @@ export default class MyProfile extends React.Component {
     render() {
         return (
             <ScrollView style={{backgroundColor: 'white'}}>
-                <StatusBar barStyle={'light-content'} />
+                <StatusBar barStyle={'dark-content'} />
                 <View style={styles.profileIntro}>
                     <Image style={styles.coverImage} 
-                        source={{uri: 'https://images.unsplash.com/photo-1500993855538-c6a99f437aa7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80'}} />
+                        source={{uri: this.state.user.foto_copertina == null ? '' : this.state.user.foto_copertina}} />
                     <View style={styles.headerBar}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={{marginLeft: 10, width: 30}}></View>
