@@ -1,19 +1,17 @@
 import React from 'react';
-import {StyleSheet, StatusBar,Text, Modal, ScrollView, View, Image, TextInput, TouchableHighlight,TouchableOpacity} from 'react-native';
+import {StyleSheet, StatusBar,Text, ScrollView, View, Image, TouchableOpacity, Modal} from 'react-native';
 import ProfilePicture from '../components/ProfilePicture';
 import BioBox from '../components/bioBox';
 import ProfileContacts from '../components/ProfileContacts';
 import MyGroupsBar from '../components/MyGroupsBar';
 import MyGroupsComponent from '../components/MyGroupsComponent';
 import MyPostsBar from '../components/MyPostsBar';
-import {NavigationSingleton} from './login';
-import CameraRollPicker from 'react-native-camera-roll-picker';
-import CategoryPicker from '../components/CategoryPicker';
-import { CheckBox } from 'react-native-elements';
+import { NavigationSingleton } from './login';
+import NewGroupModal from '../components/NewGroupModal';
 import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
-import Feather from 'react-native-vector-icons/Feather'
-import {GlobalStyles} from '../constants/Colors';
+import Feather from 'react-native-vector-icons/Feather';
+import Colors, {GlobalStyles} from '../constants/Colors';
 
 
 export default class MyProfile extends React.Component {
@@ -146,81 +144,20 @@ export default class MyProfile extends React.Component {
                     <TouchableOpacity onPress={() => this.setModalVisible(true)}
                          style={GlobalStyles.btn}>
                         <Feather name={"plus"} size={22} color={'white'}/>
-                        <Text style={{color: 'white', fontSize: 16}}>Crea un nuovo gruppo</Text>
-                        <View style={{width: 30}} />
+                        <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+                            <Text style={ {color: 'white', fontSize: 16} }>Crea un nuovo gruppo</Text>
+                        </View>
+                        <View style={ {width: 30} } />
                     </TouchableOpacity>
                 </View>
                 <Modal
-                    animationType={"slide"}
-                    transparent={false}
-                    visible={this.state.createGroupModal}
-                    onRequestClose={() => {
-                    alert('Modal has been closed.');
+                        animationType={"slide"}
+                        transparent={false}
+                        visible={this.state.createGroupModal}
+                        onRequestClose={() => {
+                        alert('Modal has been closed.');
                     }}>
-                    <View style={{backgroundColor:'white', flex:1}}>
-                        <View style={{marginTop: 22, }}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    this.setModalVisible(!this.state.createGroupModal);
-                                }}>
-                                <Text style={{fontSize:20, color:'#5499C7', marginTop:10, marginLeft:10}}>Cancel</Text>
-                            </TouchableOpacity>
-
-                        </View>
-                        <View style={{alignItems:'center', paddingTop:20, paddingBottom:20,borderBottomWidth:1, borderBottomColor:'#E5E8E8',}}>
-                            <CategoryPicker title={'Seleziona categoria'} />
-                        </View>
-
-                        <View style={{ flexDirection: 'column'}}>
-                            <View style={{flexDirection:'row', backgroundColor:'#EAECEE', padding:10}}>
-                                <Text style={{marginTop:15}}> Name your group</Text>
-                                <TextInput 
-                                    style={{fontSize:15, height:30, flex:0.9,marginTop:10, marginLeft:10,backgroundColor:'white', borderColor:'#EBEDEF', borderRadius:5, borderWidth:1,marginRight:10, paddingLeft:10}}
-                                    onChangeText={(text) => this.setState({text})}
-                                    value={this.state.text}
-                                    placeholder={'...'}
-                                />
-                            </View>
-                            <View style={{flexDirection:'row', backgroundColor:'#EAECEE', padding:10}}>
-                                <TouchableOpacity>
-                                    <Text style={{marginTop:30, flex:0.5,}}> Avatar Selected</Text>
-                                </TouchableOpacity>
-                                <Image
-                                    style={{width:60, height:60,borderRadius:30, marginLeft:40, margin:10}}
-                                    source={this.state.image}
-                                    />
-                            </View>
-                            <View style={{flexDirection:'row', paddingTop:20, backgroundColor:'#EAECEE', padding:10}}>
-
-                                <Text style={{fontSize:15, flex:0.6}}>Visibility</Text>
-
-                                <CheckBox
-                                    center
-                                    title='Public'
-                                    onIconPress={() => this.hideShowCheck()}
-                                    checked={!this.state.checkedPrivate}
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checkedColor={'#34495E'}
-                                    containerStyle={{width:100, marginTop:-15, backgroundColor:'transparent', borderColor:'transparent'}}
-                                />
-
-                                <CheckBox
-                                    center
-                                    title='Private'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    containerStyle={{width:100, marginTop:-15, backgroundColor:'transparent', borderColor:'transparent'}}
-                                    onIconPress={() => this.hideShowCheck()}
-                                    checked={this.state.checkedPrivate}
-                                    checkedColor={'#34495E'}
-                                />
-                            </View>
-                        </View>
-                        <TouchableOpacity style={{backgroundColor:'#34495E', padding:5, alignItems:'center'}}>
-                            <Text style={{color:'white', fontSize:22}}>Create</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <NewGroupModal open={this.state.createGroupModal} close={(prop) => this.setModalVisible(prop)} />
                 </Modal>
             </ScrollView>
         )
@@ -261,5 +198,39 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
         marginBottom: 20
+    },
+
+    sectionHeader: {
+        fontSize: 18,
+        marginTop: 15,
+        marginBottom: 10,
+        color: Colors.darkTitle,
+        fontWeight: '500',
+        marginHorizontal: 20
+    },
+
+    fieldContainer: {
+        flexDirection:'row',
+        paddingHorizontal: 20,
+        paddingVertical: 8,
+        justifyContent: 'flex-start',
+        borderBottomColor: '#F5F5F5',
+        borderBottomWidth: 0.5
+    },
+
+    fieldLabel: {
+        fontSize: 12,
+        color: Colors.lighterText,
+        width: 100,
+        marginTop: 6
+    },
+
+    singleInput:{
+        backgroundColor:'transparent',
+        marginRight: 0,
+        marginLeft: 10,
+        padding: 5,
+        fontSize: 14,
+        flex: 1
     }
 })

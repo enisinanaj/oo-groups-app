@@ -7,6 +7,7 @@ import APIConsts from '../constants/APIConsts';
 import ImagePicker from 'react-native-image-picker';
 import Feather from 'react-native-vector-icons/Feather'
 import ContactTypes from '../constants/ContactTypes';
+import ImageResizer from 'react-native-image-resizer'
 
 const options = {
     title: 'Seleziona',
@@ -242,15 +243,19 @@ export default class Settings extends React.Component {
           } else if (response.error) {
             console.log('ImagePicker Error: ', response.error);
           } else {
-            const source = { uri: response.uri };
-        
-            this.setState({
-                user: {
-                    ...this.state.user,
-                    foto_profilo: source.uri,
-                    foto_profilo_changed: true
-                }
-            }, () => this.enableSave());
+            ImageResizer.createResizedImage(response.uri, 800, 800, 'JPEG', 80).then((resizedImage) => {
+                this.setState({
+                    user: {
+                        ...this.state.user,
+                        foto_profilo: resizedImage.uri,
+                        foto_profilo_changed: true
+                    }
+                }, () => this.enableSave());
+            }).catch((err) => {
+                console.warn(err)
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+            });
           }
         });
     }
@@ -261,16 +266,20 @@ export default class Settings extends React.Component {
             console.log('User cancelled image picker');
           } else if (response.error) {
             console.log('ImagePicker Error: ', response.error);
-          } else {
-            const source = { uri: response.uri };
-        
-            this.setState({
-                user: {
-                    ...this.state.user,
-                    foto_copertina: source.uri,
-                    foto_copertina_changed: true
-                }
-            }, () => this.enableSave());
+          } else {        
+            ImageResizer.createResizedImage(response.uri, 800, 800, 'JPEG', 80).then((resizedImage) => {
+                this.setState({
+                    user: {
+                        ...this.state.user,
+                        foto_copertina: resizedImage.uri,
+                        foto_copertina_changed: true
+                    }
+                }, () => this.enableSave());
+            }).catch((err) => {
+                console.warn(err)
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+            });
           }
         });
     }
@@ -483,7 +492,6 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         backgroundColor:'white',
         flex:1,
-
     },
 
     laodingWindow: {flex: 1, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'rgba(250,250,250, 0.7)', flexDirection: 'column', justifyContent: 'center'},
