@@ -249,6 +249,16 @@ export default class NewGroupModal extends React.Component {
                             </View>
 
                             <View style={[styles.fieldContainer]}>
+                                <Text style={[styles.fieldLabel, {width: 125}]}>CATEGORIA</Text>
+                                <TextInput 
+                                    style={styles.singleInput}
+                                    onChangeText={(text) => this.setState({text})}
+                                    value={this.state.text}
+                                    placeholder={'...'}
+                                />
+                            </View>
+
+                            <View style={[styles.fieldContainer]}>
                                 <Text style={[styles.fieldLabel, {width: 125}]}>SOTTO CATEGORIE</Text>
                                 <TextInput 
                                     style={styles.singleInput}
