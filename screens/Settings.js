@@ -23,7 +23,6 @@ export default class Settings extends React.Component {
 
         return {
             headerTitle: 'Impostazioni',
-            headerTruncatedBackTitle: 'Indietro',
             headerRight: (
                 <TouchableOpacity 
                     disabled={params.disabled != undefined ? params.disabled : true}
@@ -344,6 +343,7 @@ export default class Settings extends React.Component {
                         
                             this.enableSave()
                         }}
+                        autoCapitalize={"none"}
                         maxLength = {60}
                         keyboardAppearance={'default'}
                         style={styles.singleInput}
@@ -378,6 +378,7 @@ export default class Settings extends React.Component {
                             
                             this.enableSave()
                         }}
+                        autoCapitalize={"none"}
                         numberOfLines={3}
                         multiline={true}
                         value={user.bio || ''}
@@ -395,6 +396,7 @@ export default class Settings extends React.Component {
                         value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
                         maxLength = {60}
                         keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
                     />
@@ -441,6 +443,7 @@ export default class Settings extends React.Component {
                         value={contacts.facebookUsername.url}
                         maxLength = {60}
                         keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
                         placeholder={"https://facebook.com/..."}
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
@@ -457,6 +460,7 @@ export default class Settings extends React.Component {
                         value={contacts.instagramUsername.url}
                         maxLength = {60}
                         keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
                         placeholder={"https://instagram.com/..."}
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
@@ -472,6 +476,7 @@ export default class Settings extends React.Component {
                             this.updateUserContactInState(ContactTypes.TWITTER, twitterUsername)
                         }}
                         value={contacts.twitterUsername.url}
+                        autoCapitalize={"none"}
                         maxLength = {60}
                         keyboardAppearance={'default'}
                         placeholder={"https://twitter.com/..."}

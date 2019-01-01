@@ -15,10 +15,9 @@ export default class NotificationComponent extends React.Component {
         return (
             <View style={{flexDirection:'row'}}>
                 <SimpleLineIcons name={'bulb'} size={25} color={this.props.color} />
-                <View style={{position:'absolute', marginLeft:23, marginTop:-5}}>
+                <View style={{position:'absolute', marginLeft:17, marginTop:-5}}>
                     <NotificationIcon notifications={'9'}/>
                 </View>
-                
             </View>
     )
 }

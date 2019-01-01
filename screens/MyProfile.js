@@ -7,7 +7,6 @@ import MyGroupsBar from '../components/MyGroupsBar';
 import MyGroupsComponent from '../components/MyGroupsComponent';
 import MyPostsBar from '../components/MyPostsBar';
 import { NavigationSingleton } from './login';
-import NewGroupModal from '../components/NewGroupModal';
 import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
 import Feather from 'react-native-vector-icons/Feather';
@@ -17,17 +16,10 @@ import Colors, {GlobalStyles} from '../constants/Colors';
 export default class MyProfile extends React.Component {
     static navigationOptions = ({navigation}) => {
         let {params = {}} = navigation.state;
-        // let foo = () => {}
-        // let updateParentState = params.updateParentState != undefined ? params.updateParentState : foo
         
         return {
             header: null,
-            headerTitle: params.user != undefined ? params.user.username : 'Profilo',
-            // headerRight: (
-            //     <TouchableOpacity onPress={() => navigation.navigate("Settings", {updateParentState: () => updateParentState()})} style={{marginRight:15}}>
-            //         <Feather name={'settings'} size={24}/>
-            //     </TouchableOpacity>
-            // )
+            headerTitle: params.user != undefined ? params.user.username : 'Profilo'
         };
     };
 
@@ -141,7 +133,7 @@ export default class MyProfile extends React.Component {
                     {this.state.mygroupsVisible? this.renderMyGroups() : null}
                 {/* <MyPostsBar/> */}
                 <View style={{marginTop: 15, marginBottom: 20}}>
-                    <TouchableOpacity onPress={() => this.setModalVisible(true)}
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('NewGroup')}
                          style={GlobalStyles.btn}>
                         <Feather name={"plus"} size={22} color={'white'}/>
                         <View style={{flexDirection: 'column', justifyContent: 'center'}}>
@@ -150,15 +142,6 @@ export default class MyProfile extends React.Component {
                         <View style={ {width: 30} } />
                     </TouchableOpacity>
                 </View>
-                <Modal
-                        animationType={"slide"}
-                        transparent={false}
-                        visible={this.state.createGroupModal}
-                        onRequestClose={() => {
-                        alert('Modal has been closed.');
-                    }}>
-                    <NewGroupModal open={this.state.createGroupModal} close={(prop) => this.setModalVisible(prop)} />
-                </Modal>
             </ScrollView>
         )
     }

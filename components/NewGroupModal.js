@@ -1,6 +1,5 @@
 import React from 'react';
-import { KeyboardAvoidingView, Image, View, TouchableOpacity, Text, StyleSheet, TextInput, ScrollView, Dimensions } from 'react-native';
-import CategoryPicker from '../components/CategoryPicker';
+import { KeyboardAvoidingView, Image, View, TouchableOpacity, Text, ActivityIndicator, StyleSheet, TextInput, ScrollView } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Colors, { GlobalStyles } from '../constants/Colors';
 import Feather from 'react-native-vector-icons/Feather';
@@ -8,7 +7,6 @@ import ImageResizer from 'react-native-image-resizer'
 import ImagePicker from 'react-native-image-picker'
 import APIConsts from '../constants/APIConsts';
 import User from '../controllers/user/instance';
-import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
 
 const options = {
     title: 'Seleziona',
@@ -19,7 +17,6 @@ const options = {
 };
 
 export default class NewGroupModal extends React.Component {
-
     constructor(props) {
         super(props);
 
@@ -30,12 +27,33 @@ export default class NewGroupModal extends React.Component {
             rules: '',
             admins: [],
             adminsFocused: false,
-            selectedAdmins: []
+            selectedAdmins: [{
+                username: 'io',
+                id: User.getInstance().user.id,
+                removable: false,
+                self: true
+            }],
+            subCategories: [],
+            category: {},
+            group: {},
+            savedAll: 0,
+            saving: false
         }
     }
 
+    isFormCompiled() {
+        return !(this.state.selectedAdmins.length == 0 
+            || this.state.subCategories.length == 0 
+            || this.state.category == undefined || this.state.category == ''
+            || this.state.info == ''
+            || this.state.rules == ''
+            || this.state.nomeGruppo == ''
+            || !this.state.group.foto_copertina_changed
+            || !this.state.group.foto_profilo_changed)
+    }
+    
     saveGroup() {
-        //TODO: validate form
+        this.setState({saving: true});
 
         // post info post
         fetch(APIConsts.apiEndpoint + "/post", {
@@ -49,7 +67,9 @@ export default class NewGroupModal extends React.Component {
             })
         })
         .then(response => response.json())
-        .then((infoPostResponse) => {            
+        .then((infoPostResponse) => {   
+            this.setState({savedAll: this.state.savedAll + 10}, () => this.checkProgress());
+
             // post rules post
             fetch(APIConsts.apiEndpoint + "/post", {
                 method: 'POST',
@@ -63,6 +83,8 @@ export default class NewGroupModal extends React.Component {
             })
             .then(rulesRespnose => rulesRespnose.json())
             .then((rulesRespnoseJson) => {
+                this.setState({savedAll: this.state.savedAll + 10}, () => this.checkProgress());
+
                 // post gruppo
                 fetch(APIConsts.apiEndpoint + "/gruppo", {
                     method: 'POST',
@@ -70,14 +92,46 @@ export default class NewGroupModal extends React.Component {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        //amministrator: [User.getInstance().user.id],
+                        amministratori: this.state.selectedAdmins.map(el => el.id),
                         info: infoPostResponse.id,
+                        categoriagruppo: this.state.category.id,
                         regole: rulesRespnoseJson.id,
                         nome: this.state.nomeGruppo
                     }) 
                 })
                 .then(groupResponse => groupResponse.json())
-                .then((groupResponseJson) => {
+                .then(groupResponseJson => {
+                    this.setState({savedAll: this.state.savedAll + 40}, () => this.checkProgress());
+
+                    this.state.subCategories.forEach(subCategory => {
+                        fetch(APIConsts.apiEndpoint + "/sottocategorie", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                descrizione_categoria: subCategory.name
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(subCategoryJson => {
+                            fetch(APIConsts.apiEndpoint + "/gruppo/" + groupResponseJson.id, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    categorie: [subCategoryJson.id]
+                                })
+                            })
+                            .then(() => this.setState({savedAll: this.state.savedAll + 5}), () => this.checkProgress())
+                        })
+                        .then(() => this.setState({savedAll: this.state.savedAll + 5}), () => this.checkProgress())
+                    })
+
+                    return groupResponseJson;
+                })
+                .then(groupResponseJson => {
                     this.manageFotoProfilo(groupResponseJson)
                     this.manageFotoCopertina(groupResponseJson)
                 })
@@ -104,7 +158,7 @@ export default class NewGroupModal extends React.Component {
                 method: 'POST',
                 body: data
             }).then((response) => {
-                console.warn("foto profilo uploaded!");
+                this.setState({savedAll: this.state.savedAll + 20}, () => this.checkProgress());
                 return response.json()
             })
             .catch(e => console.error(e))
@@ -130,7 +184,7 @@ export default class NewGroupModal extends React.Component {
                 method: 'POST',
                 body: data
             }).then((response) => {
-                console.warn("foto copertina uploaded!");
+                this.setState({savedAll: this.state.savedAll + 20}, () => this.checkProgress());
                 return response.json()
             })
             .catch(e => console.error(e))
@@ -188,7 +242,7 @@ export default class NewGroupModal extends React.Component {
     searchUsers(q) {
         this.setState({adminQuery: q})
 
-        if (q.lenght < 4) {
+        if (q == '' || q == undefined || q == null || q.length < 4) {
             this.setState({admins: []})
             return;
         }
@@ -220,13 +274,14 @@ export default class NewGroupModal extends React.Component {
             return;
         }
         
-        selectedAdmins.push(el);
-
+        selectedAdmins.push({...el, removable: true, self: false});
         this.setState({adminsFocused: false, selectedAdmins, admins: [], adminQuery: ''})
     }
 
     showAdmins() {
-        return this.state.admins.map(el => {
+        let admins = this.state.admins.filter(el => this.state.selectedAdmins.find(selected => selected.id == el.id) == undefined)
+
+        return admins.map(el => {
             return (<TouchableOpacity key={el.id} style={[styles.searchResultElement, {backgroundColor: 'rgba(240,240,250, 0.2)'}]} onPress={() => this.addAdmin(el)}>
                 <Text style={{marginVertical: 5, marginHorizontal: 7, fontSize: 13, color: Colors.darkGrey}}>{el.username}</Text>
             </TouchableOpacity>)
@@ -242,197 +297,253 @@ export default class NewGroupModal extends React.Component {
     showSelectedAdmins() {
         return this.state.selectedAdmins.map(el => {
             return (<View style={styles.tagElement} key={el.id}>
-                <Text style={{marginRight: 7, marginTop: 1, fontSize: 11, color: 'white'}}>{el.username}</Text>
-                <TouchableOpacity onPress={() => this.removeAdmin(el.id)}>
-                    <Feather name={"x"} style={{marginTop: 2}} size={12} color={"white"} />
-                </TouchableOpacity>
+                <Text style={{marginRight: el.self ? 0 : 7, marginTop: 1, fontSize: 11, color: Colors.darkTitle}}>{el.username}</Text>
+                {el.removable != undefined && el.removable ?
+                    <TouchableOpacity onPress={() => this.removeAdmin(el.id)}>
+                        <Feather name={"x"} style={{marginTop: 2}} size={12} color={Colors.darkTitle} />
+                    </TouchableOpacity>
+                : null }
             </View>)
         })
+    }
 
+    setGroupCategory(category) {
+        this.setState({category})
+    }
+
+    setGroupSubCategories(subCategories) {
+        this.setState({subCategories})
+    }
+
+    renderSubCategories() {
+        if (this.state.subCategories.length == 0) {
+            return null;
+        }
+
+        return this.state.subCategories.map((el, index) => {
+            return (<View style={styles.tagElement} key={index}>
+                <Text style={{marginRight: 0, marginTop: 1, fontSize: 11, color: Colors.darkTitle}}>{el.name}</Text>
+            </View>)
+        })
+    }
+
+    checkProgress() {
+        let {savedAll} = this.state;
+        let completed = savedAll == 60 + (10 * this.state.subCategories.length) + 20 + 20;
+
+        if (completed) {
+            this.props.navigation.goBack();
+        }
     }
 
     render() {
-        let {group = {}} = this.state;
+        let {group = {}, saving, savedAll} = this.state;
+        let completed = savedAll == 60 + (10 * this.state.subCategories.length) + 20 + 20;
 
-        return (<KeyboardAvoidingView behavior={"padding"} style={styles.container} enabled>
-                    
-                    <View style={{marginTop: 20, borderBottomColor: Colors.lightBorder, borderBottomWidth: 0.5, height: 40, flexDirection: 'row', justifyContent: 'space-between'}}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                this.props.close(false);
-                            }}>
-                            <Text style={{fontSize:14, color: Colors.main, marginTop:10, marginLeft:10}}>Cancel</Text>
+        return (
+            <KeyboardAvoidingView behavior={"padding"} style={styles.container} enabled>
+                <ScrollView>
+                    <View style={styles.coverContainer}>
+                        { group.foto_copertina != undefined ?
+                            <Image source={{uri: group.foto_copertina}} style={styles.coverImage} />
+                        : null }
+                        <View style={styles.avatarHalo}>
+                            {group.foto_profilo == undefined ?
+                                <View style={{flexDirection: 'column', justifyContent: 'center', height: 160}}>
+                                    <Text style={{fontSize: 72, marginTop: -10, alignSelf: 'center'}}>
+                                        {this.state.nomeGruppo != undefined && this.state.nomeGruppo != '' ? this.state.nomeGruppo.charAt(0) : 'B'}
+                                    </Text>
+                                </View>
+                            : 
+                                <Image
+                                    style={{width:150, height:150, borderRadius:75, alignSelf: 'center'}}
+                                    source={{uri: group.foto_profilo}} />
+                            }
+                            <View style={styles.changeAvatar}>
+                                <TouchableOpacity style={styles.touchableChangeAvatar} onPress={() => this.updateAvatar()}>
+                                    <Feather name="camera" size={18} color={Colors.darkGrey} style={{alignSelf: 'center'}}/>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.changeCover} onPress={() => this.updateCover()}>
+                            <Text style={{color: Colors.darkGrey, fontWeight: '500', fontSize: 12}}>CAMBIA COVER</Text>
                         </TouchableOpacity>
-                        <Text style={{ fontSize: 14, fontWeight: '500', marginTop: 10 }}>NUOVO GRUPPO</Text>
-                        <View style={{width: 40}}></View>
                     </View>
 
-                    <ScrollView>
-                        <View style={styles.coverContainer}>
-                            <Image source={{uri: group.foto_copertina == null ? '' : group.foto_copertina}} 
-                                style={styles.coverImage} />
-                            <View style={styles.avatarHalo}>
-                                {group.foto_profilo == undefined ?
-                                    <View style={{flexDirection: 'column', justifyContent: 'center', height: 160}}>
-                                        <Text style={{fontSize: 72, marginTop: -10, alignSelf: 'center'}}>
-                                            {this.state.nomeGruppo != undefined && this.state.nomeGruppo != '' ? this.state.nomeGruppo.charAt(0) : 'B'}
-                                        </Text>
-                                    </View>
-                                : 
-                                    <Image
-                                        style={{width:150, height:150, borderRadius:75, alignSelf: 'center'}}
-                                        source={{uri: group.foto_profilo}} />
-                                }
-                                <View style={styles.changeAvatar}>
-                                    <TouchableOpacity style={styles.touchableChangeAvatar} onPress={() => this.updateAvatar()}>
-                                        <Feather name="camera" size={18} color={Colors.darkGrey} style={{alignSelf: 'center'}}/>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                            <TouchableOpacity style={styles.changeCover} onPress={() => this.updateCover()}>
-                                <Text style={{color: Colors.darkGrey, fontWeight: '500', fontSize: 12}}>CAMBIA COVER</Text>
-                            </TouchableOpacity>
+                    <View style={{ flexDirection: 'column'}}>
+                        <View style={[styles.fieldContainer]}>
+                            <Text style={[styles.fieldLabel, {width: 125}]}>NOME GRUPPO</Text>
+                            <TextInput 
+                                style={styles.singleInput}
+                                onChangeText={(nomeGruppo) => this.setState({nomeGruppo})}
+                                value={this.state.nomeGruppo}
+                                autoCapitalize={"none"}
+                                placeholder={'Banana'}
+                            />
                         </View>
-                        {/* <View style={{alignItems:'center', paddingTop:20, paddingBottom:20,borderBottomWidth:1, borderBottomColor:'#E5E8E8',}}>
-                            <CategoryPicker title={'CATEGORIA'} />
-                        </View> */}
 
-                        <View style={{ flexDirection: 'column'}}>
-                            <View style={[styles.fieldContainer]}>
-                                <Text style={[styles.fieldLabel, {width: 125}]}>NOME GRUPPO</Text>
-                                <TextInput 
-                                    style={styles.singleInput}
-                                    onChangeText={(nomeGruppo) => this.setState({nomeGruppo})}
-                                    value={this.state.nomeGruppo}
-                                    placeholder={'Banana'}
-                                />
-                            </View>
+                        <View style={[styles.fieldContainer, 
+                                this.state.selectedAdmins.length > 0 || this.state.adminsFocused ? {borderBottomWidth: 0} : {} ]}>
+                            <Text style={[styles.fieldLabel, {width: 125}]}>AMMINISTRATORI</Text>
+                            <TextInput 
+                                style={styles.singleInput}
+                                onFocus={() => this.setState({adminsFocused: true})}
+                                onChangeText={(adminQuery) => this.searchUsers(adminQuery)}
+                                value={this.state.adminQuery}
+                                autoCapitalize={"none"}
+                                placeholder={'nome utente'}
+                            />
+                            <Feather name={"search"} size={20} color={Colors.lighterText} style={{position: 'absolute', right: 20, top: 12}} />
+                        </View>
 
+                        {this.state.adminsFocused ? 
                             <View style={[styles.fieldContainer, 
-                                    this.state.selectedAdmins.length > 0 || this.state.adminsFocused ? {borderBottomWidth: 0} : {} ]}>
-                                <Text style={[styles.fieldLabel, {width: 125}]}>AMMINISTRATORI</Text>
-                                <TextInput 
-                                    style={styles.singleInput}
-                                    onFocus={() => this.setState({adminsFocused: true})}
-                                    onChangeText={(adminQuery) => this.searchUsers(adminQuery)}
-                                    value={this.state.adminQuery}
-                                    placeholder={'nome utente'}
-                                />
+                                {flexDirection: 'column', paddingTop: 0, paddingBottom: 0, paddingLeft: 150, borderBottomWidth: 0, marginBottom: 10}]}>
+                                {this.showAdmins()}
                             </View>
+                        : null }
 
-                            {this.state.adminsFocused ? 
-                                <View style={[styles.fieldContainer, 
-                                    {flexDirection: 'column', paddingTop: 0, paddingBottom: 0, paddingLeft: 150, borderBottomWidth: 0, marginBottom: 10}]}>
-                                    {this.showAdmins()}
-                                </View>
-                            : null }
+                        {this.state.selectedAdmins.length > 0 ? 
+                            <ScrollView 
+                                style={{flexDirection:'row', paddingHorizontal: 20, paddingTop: 0}} 
+                                horizontal={true}>
+                                {this.showSelectedAdmins()}
+                            </ScrollView>
+                        : null }
 
-                            {this.state.selectedAdmins.length > 0 ? 
-                                <ScrollView 
-                                    style={{flexDirection:'row', paddingHorizontal: 20, paddingTop: 0}} 
-                                    horizontal={true}>
-                                    {this.showSelectedAdmins()}
-                                </ScrollView>
-                            : null }
-
-                            <View style={[styles.fieldContainer, {borderTopColor: '#F5F5F5', borderTopWidth: 0.5}]}>
+                        <View style={[styles.fieldContainer, {borderTopColor: '#F5F5F5', borderTopWidth: 0.5, justifyContent: 'space-between'}]}>
+                            <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}} 
+                                onPress={() => {this.props.navigation.navigate('SelezioneCategoriaGruppo', {
+                                    setGroupCategory: (category) => this.setGroupCategory(category),
+                                    selected: this.state.category
+                                })}}>
                                 <Text style={[styles.fieldLabel, {width: 125}]}>CATEGORIA</Text>
-                                <TextInput 
-                                    style={styles.singleInput}
-                                    onChangeText={(text) => this.setState({text})}
-                                    value={this.state.text}
-                                    placeholder={'...'}
-                                />
-                            </View>
-
-                            <View style={[styles.fieldContainer]}>
-                                <Text style={[styles.fieldLabel, {width: 125}]}>SOTTO CATEGORIE</Text>
-                                <TextInput 
-                                    style={styles.singleInput}
-                                    onChangeText={(text) => this.setState({text})}
-                                    value={this.state.text}
-                                    placeholder={'...'}
-                                />
-                            </View>
-
-                            <Text style={styles.sectionHeader}>Dettagli</Text>
-
-                            <View style={styles.fieldContainer}>
-                                <Text style={styles.fieldLabel}>
-                                    INFO GRUPPO
-                                </Text>
-                                <TextInput
-                                    onChangeText={(info) => this.setState({info})}
-                                    numberOfLines={3}
-                                    placeholder={"La comunità per tutti gli appassionati di..."}
-                                    multiline={true}
-                                    value={this.state.info}
-                                    keyboardAppearance={'default'}
-                                    style={styles.singleInput}
-                                    clearButtonMode={'while-editing'}
-                                />
-                            </View>
-
-                            <View style={styles.fieldContainer}>
-                                <Text style={styles.fieldLabel}>
-                                    REGOLE DEL GRUPPO
-                                </Text>
-                                <TextInput
-                                    onChangeText={(rules) => this.setState({rules})}
-                                    numberOfLines={3}
-                                    placeholder={"Verranno bloccati tutti gli utenti che violeranno le poche regole di questo gruppo..."}
-                                    multiline={true}
-                                    value={this.state.rules}
-                                    keyboardAppearance={'default'}
-                                    style={styles.singleInput}
-                                    clearButtonMode={'while-editing'}
-                                />
-                            </View>
-
-                            <Text style={styles.sectionHeader}>Privacy</Text>
-
-                            <View style={[styles.fieldContainer, {marginTop: 15, borderTopColor: '#f5f5f5', borderTopWidth: 0.5}]}>
-                                <Text style={styles.fieldLabel}>VISIBILITÀ GRUPPO</Text>
-
-                                <CheckBox
-                                    center
-                                    title='Pubblico'
-                                    onIconPress={() => this.hideShowCheck()}
-                                    checked={!this.state.checkedPrivate}
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checkedColor={'#34495E'}
-                                    containerStyle={{width:120, marginTop:-5, backgroundColor:'transparent', borderColor:'transparent'}}
-                                />
-
-                                <CheckBox
-                                    center
-                                    title='Privato'
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    containerStyle={{width:100, marginTop:-5, marginLeft: -15, backgroundColor:'transparent', borderColor:'transparent'}}
-                                    onIconPress={() => this.hideShowCheck()}
-                                    checked={this.state.checkedPrivate}
-                                    checkedColor={'#34495E'}
-                                />
-                            </View>
-                        </View>
-                        <View style={{marginTop: 15, marginBottom: 20}}>
-                            <TouchableOpacity onPress={() => this.saveGroup()}
-                                style={[GlobalStyles.btn, {backgroundColor: Colors.main}]}>
-                                <Feather name={"check"} size={22} color={'white'}/>
-                                <View style={{flexDirection: 'column', justifyContent: 'center'}}>
-                                    <Text style={ {color: 'white', fontSize: 16} }>Salva</Text>
-                                </View>
-                                <View style={ {width: 30} } />
+                                {this.state.category.categoria != undefined ?
+                                    <Text style={styles.singleInput}>{this.state.category.categoria}</Text>
+                                : null }
+                                <Feather name={"chevron-right"} size={22} color={Colors.lighterText} />
                             </TouchableOpacity>
                         </View>
-                    </ScrollView>
-                </KeyboardAvoidingView>)
+
+                        <View style={[styles.fieldContainer, {justifyContent: 'space-between'},
+                            this.state.subCategories.length > 0 ? {borderBottomWidth: 0} : {} ]}>
+                            <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}
+                                    onPress={() => {this.props.navigation.navigate('SottoCategorieGruppo', {
+                                    setGroupSubCategories: (category) => this.setGroupSubCategories(category),
+                                    selected: this.state.subCategories
+                                })}}>
+                                <Text style={[styles.fieldLabel, {width: 125}]}>SOTTO CATEGORIE</Text>
+                                <Feather name={"chevron-right"} size={22} color={Colors.lighterText} />
+                            </TouchableOpacity>
+                        </View>
+
+                        {this.state.subCategories.length > 0 ? 
+                            <ScrollView 
+                                style={{flexDirection:'row', paddingHorizontal: 20, paddingTop: 0, borderBottomColor: '#F5F5F5', borderBottomWidth: 0.5}} 
+                                horizontal={true}>
+                                {this.renderSubCategories()}
+                            </ScrollView>
+                        : null }
+
+                        <Text style={styles.sectionHeader}>Dettagli</Text>
+
+                        <View style={styles.fieldContainer}>
+                            <Text style={styles.fieldLabel}>
+                                INFO GRUPPO
+                            </Text>
+                            <TextInput
+                                onChangeText={(info) => this.setState({info})}
+                                numberOfLines={3}
+                                placeholder={"La comunità per tutti gli appassionati di..."}
+                                multiline={true}
+                                value={this.state.info}
+                                keyboardAppearance={'default'}
+                                autoCapitalize={"none"}
+                                style={styles.singleInput}
+                                clearButtonMode={'while-editing'}
+                            />
+                        </View>
+
+                        <View style={styles.fieldContainer}>
+                            <Text style={styles.fieldLabel}>
+                                REGOLE DEL GRUPPO
+                            </Text>
+                            <TextInput
+                                onChangeText={(rules) => this.setState({rules})}
+                                numberOfLines={3}
+                                placeholder={"Verranno bloccati tutti gli utenti che violeranno le poche regole di questo gruppo..."}
+                                multiline={true}
+                                value={this.state.rules}
+                                keyboardAppearance={'default'}
+                                style={styles.singleInput}
+                                autoCapitalize={"none"}
+                                clearButtonMode={'while-editing'}
+                            />
+                        </View>
+
+                        <Text style={styles.sectionHeader}>Privacy</Text>
+
+                        <View style={[styles.fieldContainer, {marginTop: 15, borderTopColor: '#f5f5f5', borderTopWidth: 0.5}]}>
+                            <Text style={styles.fieldLabel}>VISIBILITÀ GRUPPO</Text>
+
+                            <CheckBox
+                                center
+                                title='Pubblico'
+                                onIconPress={() => this.hideShowCheck()}
+                                checked={!this.state.checkedPrivate}
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                checkedColor={'#34495E'}
+                                containerStyle={{width:120, marginTop:-5, backgroundColor:'transparent', borderColor:'transparent'}}
+                            />
+
+                            <CheckBox
+                                center
+                                title='Privato'
+                                checkedIcon='dot-circle-o'
+                                uncheckedIcon='circle-o'
+                                containerStyle={{width:100, marginTop:-5, marginLeft: -15, backgroundColor:'transparent', borderColor:'transparent'}}
+                                onIconPress={() => this.hideShowCheck()}
+                                checked={this.state.checkedPrivate}
+                                checkedColor={'#34495E'}
+                            />
+                        </View>
+                    </View>
+                    <View style={{marginTop: 15, marginBottom: 10}}>
+                        <TouchableOpacity onPress={() => this.saveGroup()}
+                            disabled={!this.isFormCompiled()}
+                            style={[GlobalStyles.btn, {backgroundColor: !this.isFormCompiled() ? Colors.darkGrey : Colors.main}]}>
+                            <Feather name={"check"} size={22} color={'white'}/>
+                            <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+                                <Text style={ {color: 'white', fontSize: 16} }>Salva</Text>
+                            </View>
+                            <View style={ {width: 30} } />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.footNote}>
+                        Per creare un gruppo è necessario compilare tutte le informazioni sopra richieste.
+                    </Text>
+                </ScrollView>
+                {saving && !completed ?
+                    <View style={{position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(250,250,250,0.6)',
+                        flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+                            <ActivityIndicator size={"large"} />
+                            <Text style={{marginTop: 25}}>CREANDO IL NUOVO GRUPPO...</Text>
+                        </View>
+                    </View>
+                : null }
+            </KeyboardAvoidingView>)
     }
 }
 
 const styles = StyleSheet.create({
+    footNote: {
+        fontSize: 11,
+        color: Colors.lighterText,
+        marginBottom: 20,
+        marginHorizontal: 30
+    },
 
     container:{
         flexDirection:'column',
@@ -443,7 +554,7 @@ const styles = StyleSheet.create({
     tagElement: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        backgroundColor: '#1abc9c',
+        backgroundColor: '#f5f5f5',
         paddingHorizontal: 5,
         paddingVertical: 2,
         marginRight: 10,
