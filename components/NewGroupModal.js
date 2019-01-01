@@ -8,6 +8,7 @@ import ImageResizer from 'react-native-image-resizer'
 import ImagePicker from 'react-native-image-picker'
 import APIConsts from '../constants/APIConsts';
 import User from '../controllers/user/instance';
+import parseErrorStack from 'react-native/Libraries/Core/Devtools/parseErrorStack';
 
 const options = {
     title: 'Seleziona',
@@ -27,6 +28,9 @@ export default class NewGroupModal extends React.Component {
             nomeGruppo: '',
             info: '',
             rules: '',
+            admins: [],
+            adminsFocused: false,
+            selectedAdmins: []
         }
     }
 
@@ -181,6 +185,72 @@ export default class NewGroupModal extends React.Component {
         });
     }
 
+    searchUsers(q) {
+        this.setState({adminQuery: q})
+
+        if (q.lenght < 4) {
+            this.setState({admins: []})
+            return;
+        }
+
+        fetch(APIConsts.apiEndpoint + "/utente?username_contains=" + q, {
+            method: 'GET',
+            headers: {
+                'ContentType': 'application/json'
+            }
+        })
+        .then(result => result.json())
+        .then(resultJson => {
+            let admins = resultJson.map(el => {
+                return {
+                    username: el.username,
+                    id: el.id
+                }
+            })
+
+            this.setState({admins})
+        })
+    }
+
+    addAdmin(el) {
+        let {selectedAdmins = []} = this.state;
+
+        if (selectedAdmins.find(f => f.id == el.id) != undefined) {
+            this.setState({adminsFocused: false, admins: [], adminQuery: ''})
+            return;
+        }
+        
+        selectedAdmins.push(el);
+
+        this.setState({adminsFocused: false, selectedAdmins, admins: [], adminQuery: ''})
+    }
+
+    showAdmins() {
+        return this.state.admins.map(el => {
+            return (<TouchableOpacity key={el.id} style={[styles.searchResultElement, {backgroundColor: 'rgba(240,240,250, 0.2)'}]} onPress={() => this.addAdmin(el)}>
+                <Text style={{marginVertical: 5, marginHorizontal: 7, fontSize: 13, color: Colors.darkGrey}}>{el.username}</Text>
+            </TouchableOpacity>)
+        })
+    }
+
+    removeAdmin(adminId) {
+        let {selectedAdmins = []} = this.state;
+        selectedAdmins = selectedAdmins.filter(el => el.id != adminId)
+        this.setState({selectedAdmins})
+    }
+
+    showSelectedAdmins() {
+        return this.state.selectedAdmins.map(el => {
+            return (<View style={styles.tagElement} key={el.id}>
+                <Text style={{marginRight: 7, marginTop: 1, fontSize: 11, color: 'white'}}>{el.username}</Text>
+                <TouchableOpacity onPress={() => this.removeAdmin(el.id)}>
+                    <Feather name={"x"} style={{marginTop: 2}} size={12} color={"white"} />
+                </TouchableOpacity>
+            </View>)
+        })
+
+    }
+
     render() {
         let {group = {}} = this.state;
 
@@ -238,15 +308,31 @@ export default class NewGroupModal extends React.Component {
                                 />
                             </View>
 
-                            <View style={[styles.fieldContainer]}>
+                            <View style={[styles.fieldContainer, 
+                                    this.state.selectedAdmins.length > 0 || this.state.adminsFocused ? {borderBottomWidth: 0} : {} ]}>
                                 <Text style={[styles.fieldLabel, {width: 125}]}>AMMINISTRATORI</Text>
                                 <TextInput 
                                     style={styles.singleInput}
-                                    onChangeText={(text) => this.setState({text})}
-                                    value={this.state.text}
-                                    placeholder={'...'}
+                                    onFocus={() => this.setState({adminsFocused: true})}
+                                    onChangeText={(adminQuery) => this.searchUsers(adminQuery)}
+                                    value={this.state.adminQuery}
+                                    placeholder={'nome utente'}
                                 />
                             </View>
+
+                            {this.state.adminsFocused ? 
+                                <View style={[styles.fieldContainer, {flexDirection: 'column', paddingTop: 0, paddingBottom: 0, paddingLeft: 150}]}>
+                                    {this.showAdmins()}
+                                </View>
+                            : null }
+
+                            {this.state.selectedAdmins.length > 0 ? 
+                                <ScrollView 
+                                    style={{flexDirection:'row', paddingHorizontal: 20, paddingVertical: 8, borderBottomColor: '#F5F5F5', borderBottomWidth: 0.5}} 
+                                    horizontal={true}>
+                                    {this.showSelectedAdmins()}
+                                </ScrollView>
+                            : null }
 
                             <View style={[styles.fieldContainer]}>
                                 <Text style={[styles.fieldLabel, {width: 125}]}>CATEGORIA</Text>
@@ -351,6 +437,16 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         backgroundColor:'white',
         flex:1,
+    },
+
+    tagElement: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        backgroundColor: '#1abc9c',
+        paddingHorizontal: 5,
+        paddingVertical: 2,
+        marginRight: 10,
+        borderRadius: 3
     },
 
     sectionHeader: {
