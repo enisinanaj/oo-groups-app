@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
+import Colors from '../constants/Colors';
 
 export default class NotificationIcon extends React.Component {
     constructor(props) {
@@ -11,8 +12,9 @@ export default class NotificationIcon extends React.Component {
 render(){
     return (
         <View style={styles.container}>
-            <Text style={{color:'white'}}>{this.state.notifications}</Text>
-            
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Text style={{color:'white'}}>{this.state.notifications}</Text>
+            </View>
         </View>
     )
 }
@@ -23,9 +25,11 @@ const styles=StyleSheet.create ({
         width:20,
         height:20,
         borderRadius:10,
-        backgroundColor:'#3498DB',
+        backgroundColor: Colors.main,
         color:'white',
         alignItems:'center',
+        flexDirection: 'column',
+        justifyContent: 'center',
         zIndex: 99,
     },
 })

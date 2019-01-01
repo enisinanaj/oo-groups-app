@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView} from 'react-native';
+import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import User from '../controllers/user/instance';
@@ -7,6 +7,7 @@ import APIConsts from '../constants/APIConsts';
 import ImagePicker from 'react-native-image-picker';
 import Feather from 'react-native-vector-icons/Feather'
 import ContactTypes from '../constants/ContactTypes';
+import ImageResizer from 'react-native-image-resizer'
 
 const options = {
     title: 'Seleziona',
@@ -22,7 +23,6 @@ export default class Settings extends React.Component {
 
         return {
             headerTitle: 'Impostazioni',
-            headerTruncatedBackTitle: 'Indietro',
             headerRight: (
                 <TouchableOpacity 
                     disabled={params.disabled != undefined ? params.disabled : true}
@@ -62,7 +62,8 @@ export default class Settings extends React.Component {
             num: 0,
             selected:'',
             checkedPrivate: true,
-            dataChanged: false
+            dataChanged: false,
+            isLoading: false
         }
     }
 
@@ -85,6 +86,7 @@ export default class Settings extends React.Component {
     }
 
     updateProfile() {
+        this.setState({isLoading: true});
         fetch(APIConsts.apiEndpoint + "/utente/" + this.state.user.id, {
             method: 'PUT',
             headers: {
@@ -103,21 +105,22 @@ export default class Settings extends React.Component {
             this.setState({dataChanged: false})
             User.getInstance().setUser(responseJSON);
             this.props.navigation.state.params.updateParentState()
-        }).then(() => {
-            this.manageFotoProfilo()
+        }).then((next) => {
+            return this.manageFotoProfilo(next)
         })
-        .then(() => {
-            this.manageFotoCopertina()
+        .then((next) => {
+            return this.manageFotoCopertina(next)
         })
         .then(() => {
             this.updateUserContacts()
         })
+        .then(() => this.setState({isLoading: false}))
         .catch(e => {
             console.error(e)
         })
     }
 
-    manageFotoProfilo() {
+    manageFotoProfilo(next) {
         if (this.state.user.foto_profilo_changed) {
             const data = new FormData();
             
@@ -146,10 +149,12 @@ export default class Settings extends React.Component {
                 })
             })
             .catch(e => console.error(e))
+        } else {
+            return next;
         }
     }
 
-    manageFotoCopertina() {
+    manageFotoCopertina(next) {
         if (this.state.user.foto_copertina_changed) {
             const data = new FormData();
             
@@ -178,6 +183,8 @@ export default class Settings extends React.Component {
                 })
             })
             .catch(e => console.error(e))
+        } else {
+            return next
         }
     }
 
@@ -221,6 +228,7 @@ export default class Settings extends React.Component {
                         url: contacts[key].url
                     })
                 }).then(() => {
+                    this.setState({isLoading: false})
                     this.props.navigation.state.params.updateParentState()
                 }).catch(e => console.error(e))
             })
@@ -234,15 +242,19 @@ export default class Settings extends React.Component {
           } else if (response.error) {
             console.log('ImagePicker Error: ', response.error);
           } else {
-            const source = { uri: response.uri };
-        
-            this.setState({
-                user: {
-                    ...this.state.user,
-                    foto_profilo: source.uri,
-                    foto_profilo_changed: true
-                }
-            }, () => this.enableSave());
+            ImageResizer.createResizedImage(response.uri, 800, 800, 'JPEG', 80).then((resizedImage) => {
+                this.setState({
+                    user: {
+                        ...this.state.user,
+                        foto_profilo: resizedImage.uri,
+                        foto_profilo_changed: true
+                    }
+                }, () => this.enableSave());
+            }).catch((err) => {
+                console.warn(err)
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+            });
           }
         });
     }
@@ -253,16 +265,20 @@ export default class Settings extends React.Component {
             console.log('User cancelled image picker');
           } else if (response.error) {
             console.log('ImagePicker Error: ', response.error);
-          } else {
-            const source = { uri: response.uri };
-        
-            this.setState({
-                user: {
-                    ...this.state.user,
-                    foto_copertina: source.uri,
-                    foto_copertina_changed: true
-                }
-            }, () => this.enableSave());
+          } else {        
+            ImageResizer.createResizedImage(response.uri, 800, 800, 'JPEG', 80).then((resizedImage) => {
+                this.setState({
+                    user: {
+                        ...this.state.user,
+                        foto_copertina: resizedImage.uri,
+                        foto_copertina_changed: true
+                    }
+                }, () => this.enableSave());
+            }).catch((err) => {
+                console.warn(err)
+                // Oops, something went wrong. Check that the filename is correct and
+                // inspect err to get more details.
+            });
           }
         });
     }
@@ -283,6 +299,13 @@ export default class Settings extends React.Component {
             {
                 // AVATAR
             }
+            {this.state.isLoading ?
+                <View style={styles.laodingWindow}>
+                    <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                        <ActivityIndicator size={"large"} />
+                    </View>
+                </View>
+            : null }
             <View style={{alignItems:'center', borderBottomColor:'#EAECEE', borderBottomWidth:1, justifyContent: 'flex-start', flexDirection: 'column', height: 185}}>
                 <Image source={{uri: this.state.user.foto_copertina == null ? '' : this.state.user.foto_copertina}} 
                     style={styles.coverImage} />
@@ -320,6 +343,7 @@ export default class Settings extends React.Component {
                         
                             this.enableSave()
                         }}
+                        autoCapitalize={"none"}
                         maxLength = {60}
                         keyboardAppearance={'default'}
                         style={styles.singleInput}
@@ -354,6 +378,7 @@ export default class Settings extends React.Component {
                             
                             this.enableSave()
                         }}
+                        autoCapitalize={"none"}
                         numberOfLines={3}
                         multiline={true}
                         value={user.bio || ''}
@@ -371,6 +396,7 @@ export default class Settings extends React.Component {
                         value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
                         maxLength = {60}
                         keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
                     />
@@ -417,6 +443,7 @@ export default class Settings extends React.Component {
                         value={contacts.facebookUsername.url}
                         maxLength = {60}
                         keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
                         placeholder={"https://facebook.com/..."}
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
@@ -433,6 +460,7 @@ export default class Settings extends React.Component {
                         value={contacts.instagramUsername.url}
                         maxLength = {60}
                         keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
                         placeholder={"https://instagram.com/..."}
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
@@ -448,6 +476,7 @@ export default class Settings extends React.Component {
                             this.updateUserContactInState(ContactTypes.TWITTER, twitterUsername)
                         }}
                         value={contacts.twitterUsername.url}
+                        autoCapitalize={"none"}
                         maxLength = {60}
                         keyboardAppearance={'default'}
                         placeholder={"https://twitter.com/..."}
@@ -468,9 +497,9 @@ const styles = StyleSheet.create({
         flexDirection:'column',
         backgroundColor:'white',
         flex:1,
-
     },
 
+    laodingWindow: {flex: 1, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10, backgroundColor: 'rgba(250,250,250, 0.7)', flexDirection: 'column', justifyContent: 'center'},
     avatarHalo: {width: 160, height: 160, alignSelf: 'center', padding: 5, borderRadius: 80, marginTop: 10, backgroundColor: 'rgba(250,250,250,0.6)'},
 
     sectionHeader: {

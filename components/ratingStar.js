@@ -18,12 +18,30 @@ export default class RatingStar extends React.Component {
 
 
   render() {
-        const {style = {}} = this.props;
-        return (
-            <View style={style}>
-                <FontAwesome name={'star'} size={26} color={Colors.lighterText}/>
-                <Text style={{fontSize:9, position:'absolute', marginTop:8, color:'white',fontWeight:'bold', marginLeft:6}}>{this.state.rating}</Text>
+    const {style = {}} = this.props;
+    return (
+        <View style={[styles.container, style]}>
+            {/* <FontAwesome name={'circle'} size={26} color={Colors.lighterText}/> */}
+            <View style={styles.innerContainer}>
+                <Text style={{fontSize:9, color:'white',fontWeight:'bold'}}>{this.state.rating}</Text>
             </View>
-        );
-  } 
+        </View>
+    );
+  }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: Colors.lighterText,
+        borderRadius: 11,
+        width: 22,
+        height: 22,
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+
+    innerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center'
+    }
+})

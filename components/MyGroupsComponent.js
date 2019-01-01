@@ -25,7 +25,7 @@ export default class MyGroupsComponent extends React.Component {
         <View style={styles.container}>
             <Image source={this.props.smallAvatar} style={[styles.groupCover, {resizeMode: 'cover'}]}></Image>
             
-            <View style={{flexDirection: 'column', marginLeft: 15, marginRight: 0, justifyContent: 'space-between', paddingVertical: 10}}>
+            <View style={{flexDirection: 'column', marginLeft: 15, marginRight: 0, justifyContent: 'space-between'}}>
                 <TouchableOpacity  onPress={() => this.props.onPress()} style={{}}>
                     <Text style={{fontSize:18, fontWeight: '500', color: Colors.darkTitle}}>{this.state.groupname}</Text>
                 </TouchableOpacity>
@@ -53,19 +53,19 @@ const styles = StyleSheet.create({
     container:{
         flexDirection:'row',
         justifyContent: 'flex-start',
-        height:130,
+        height:90,
         borderRadius: 20,
         padding: 10,
         flex: 1,
-        marginHorizontal: 20,
+        marginHorizontal: 10,
         marginVertical: 5,
         backgroundColor: Colors.lightGreyBackground
     },
     
     groupCover: {
         borderRadius: 20,
-        height: 110,
-        width: 110,
+        height: 70,
+        width: 70,
         marginVertical: 0,
         marginBottom: 5
     }

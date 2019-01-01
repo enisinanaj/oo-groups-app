@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, ActivityIndicator} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Entypo from 'react-native-vector-icons/Entypo'
+import {View, ActivityIndicator, TouchableOpacity, Text} from 'react-native';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import { TabNavigator, TabBarBottom, createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
 import Login from './screens/login';
 import Terms from './screens/terms';
@@ -27,6 +26,10 @@ import PostRequests from './screens/PostRequests';
 
 import User from './controllers/user/instance';
 import APIConsts from './constants/APIConsts';
+import NewGroupModal from './components/NewGroupModal';
+import SelezioneCategoriaGruppo from './screens/SelezioneCategoriaGruppo';
+import SottoCategorieGruppo from './screens/SottoCategorieGruppo';
+import Colors from './constants/Colors';
 
 const RNFS = require('react-native-fs');
 
@@ -54,10 +57,58 @@ const RNFS = require('react-native-fs');
     }
   );
 
+  const NewGroupStack = createStackNavigator(
+    {
+      NewGroup: {
+        screen: NewGroupModal,
+        navigationOptions: ({navigation}) => {
+          return {
+            headerTitle: 'Nuovo Gruppo',
+            headerLeft: () => {
+              return (<TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                <Text style={{marginLeft: 13, fontSize: 17, color: Colors.main}}>Indietro</Text>
+              </TouchableOpacity>)
+            }
+          }
+        }
+      },
+      SelezioneCategoriaGruppo: {
+        screen: SelezioneCategoriaGruppo
+      },
+      SottoCategorieGruppo: {
+        screen: SottoCategorieGruppo
+      }
+    },
+    {
+      initialRouteName: 'NewGroup',
+    }
+  )
+
+  const InnerProfile = createStackNavigator( {
+    Profile:{
+      screen: MyProfile,
+      navigationOptions: {
+        header: null
+      }
+    },
+    NewGroup: {
+      screen: NewGroupStack
+    }
+  }, {
+    mode: 'modal',
+    headerMode: 'none',
+    initialRouteName: 'Profile'
+  })
+
   const ProfileStack = createStackNavigator(
     {
       Profile:{
-          screen: MyProfile,
+        screen: InnerProfile,
+        navigationOptions: () => {
+          return {
+            header: null
+          }
+        }
       },
       AdminView:{
         screen: AdminView,
@@ -79,27 +130,27 @@ const RNFS = require('react-native-fs');
       },
     },
     {
-      initialRouteName: 'Profile',
+      initialRouteName: 'Profile'
     }
   );
 
   const GroupsStack = createStackNavigator(
     {
-    MyGroups:{
-        screen: MyGroups,
+      MyGroups:{
+          screen: MyGroups,
+      },
     },
-  },
     {
       initialRouteName: 'MyGroups',
     }
   )
 
   const NotificationsStack = createStackNavigator(
-  {
+    {
       Notifications:{
           screen: NotificationsScreen,
       },
-  },
+    },
     {
       initialRouteName: 'Notifications',
     }
@@ -113,7 +164,6 @@ const RNFS = require('react-native-fs');
       CompletePostCard:{
         screen: CompletePostCard
       },
-
     }, 
     {
       initialRouteName: 'Posts',
@@ -144,9 +194,9 @@ const RNFS = require('react-native-fs');
 
   const HomeNavigation = TabNavigator(
   {
-    Home: { screen: HomeStack },
     Posts:{screen: PostStack},
     Groups:{ screen: GroupsStack},
+    Home: { screen: HomeStack },
     Notifications:{screen: NotificationsStack},
     Profile: { screen: ProfileStack },
   },
@@ -155,20 +205,17 @@ const RNFS = require('react-native-fs');
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
         if (routeName === 'Home') {
-          return <Entypo name={'home'} size={29} color={tintColor} />;
+          return <SimpleLineIcons name={'home'} size={29} color={tintColor} />;
 
-        }else if (routeName === 'Posts') {
-          return <FontAwesome name={'file-text'} size={25} color={tintColor} />;
-        }else if (routeName === 'Groups') {
-            return <FontAwesome style={{marginRight:7}} name={'user-circle-o'} size={29} color={tintColor}/>;
-          }
-          else if (routeName === 'Notifications') {
-            return <NotificationComponent/>;
-          }
-          else if (routeName === 'Profile') {
-            return <IconAvatar smallAvatar={{uri: User.getInstance().user.foto_profilo}}/>;
-
-          }
+        } else if (routeName === 'Posts') {
+          return <SimpleLineIcons name={'layers'} size={25} color={tintColor} />;
+        } else if (routeName === 'Groups') {
+          return <SimpleLineIcons style={{marginRight:7}} name={'compass'} size={29} color={tintColor}/>;
+        } else if (routeName === 'Notifications') {
+          return <NotificationComponent color={tintColor} />;
+        } else if (routeName === 'Profile') {
+          return <IconAvatar focused={focused} smallAvatar={{uri: User.getInstance().user.foto_profilo}}/>;
+        }
 
         // You can return any component that you like here! We usually use an
         // icon component from react-native-vector-icons
@@ -182,8 +229,9 @@ const RNFS = require('react-native-fs');
       inactiveTintColor: 'gray',
       showLabel:false,
     },
-    animationEnabled: true,
-    swipeEnabled: true
+    animationEnabled: false,
+    swipeEnabled: false,
+    initialRouteName: 'Profile'
   }
 );
 
