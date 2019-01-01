@@ -321,20 +321,21 @@ export default class NewGroupModal extends React.Component {
                             </View>
 
                             {this.state.adminsFocused ? 
-                                <View style={[styles.fieldContainer, {flexDirection: 'column', paddingTop: 0, paddingBottom: 0, paddingLeft: 150}]}>
+                                <View style={[styles.fieldContainer, 
+                                    {flexDirection: 'column', paddingTop: 0, paddingBottom: 0, paddingLeft: 150, borderBottomWidth: 0, marginBottom: 10}]}>
                                     {this.showAdmins()}
                                 </View>
                             : null }
 
                             {this.state.selectedAdmins.length > 0 ? 
                                 <ScrollView 
-                                    style={{flexDirection:'row', paddingHorizontal: 20, paddingVertical: 8, borderBottomColor: '#F5F5F5', borderBottomWidth: 0.5}} 
+                                    style={{flexDirection:'row', paddingHorizontal: 20, paddingTop: 0}} 
                                     horizontal={true}>
                                     {this.showSelectedAdmins()}
                                 </ScrollView>
                             : null }
 
-                            <View style={[styles.fieldContainer]}>
+                            <View style={[styles.fieldContainer, {borderTopColor: '#F5F5F5', borderTopWidth: 0.5}]}>
                                 <Text style={[styles.fieldLabel, {width: 125}]}>CATEGORIA</Text>
                                 <TextInput 
                                     style={styles.singleInput}
@@ -446,7 +447,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         paddingVertical: 2,
         marginRight: 10,
-        borderRadius: 3
+        borderRadius: 3,
+        marginBottom: 10
     },
 
     sectionHeader: {
