@@ -1,11 +1,8 @@
-import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, Button, ScrollView, TouchableOpacity} from 'react-native';
-import GroupProfilePicture from '../components/GroupProfilePicture';
+import React from 'react';
+import { StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo'
 import MenuBarMember from '../components/MenuBarMember';
-import GroupProfileHeader from '../components/GroupProfileHeader';
-import NotesBar from '../components/NotesBar';
-import CategoryHeader from '../components/CategoryHeader';
+import MyGroupsBar from '../components/MyGroupsBar';
 import CategoryDatas from '../components/CategoryDatas';
 import ShareButton from '../components/ShareButton';
 import CarouselGroup from '../components/CarouselGroup';
@@ -44,11 +41,12 @@ export default class AdminView extends React.Component {
             <CarouselGroup/>
             <ShareButton/>
             <View >
-                <CategoryHeader/>
-                <CategoryDatas categoryTitle={'Memes'} yourVote={10} generalRating={'9,7'}/>
-                <CategoryDatas categoryTitle={'Calciomercato'} yourVote={10} generalRating={'9,1'}/>
-                <CategoryDatas categoryTitle={'Champions'} yourVote={10} generalRating={'9,5'}/>
-                <CategoryDatas categoryTitle={'WorldCup'} yourVote={10} generalRating={'9,9'}/>
+                <MyGroupsBar title={"Categories"} rightViewVisible={false}>
+                    <CategoryDatas onPress={() => props.navigation.navigate("Posts")} categoryTitle={'Memes'} yourVote={10} generalRating={'9,7'}/>
+                    <CategoryDatas categoryTitle={'Calciomercato'} yourVote={10} generalRating={'9,1'}/>
+                    <CategoryDatas categoryTitle={'Champions'} yourVote={10} generalRating={'9,5'}/>
+                    <CategoryDatas categoryTitle={'WorldCup'} yourVote={10} generalRating={'9,9'}/>
+                </MyGroupsBar>
             </View>
         </ScrollView>
     );

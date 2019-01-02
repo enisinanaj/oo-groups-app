@@ -37,6 +37,7 @@ export default class MyProfile extends React.Component {
             selectedCategory:'Default',
             text:'',
             checkedPrivate: false,
+            myGroups: []
          }
     }
 
@@ -60,8 +61,38 @@ export default class MyProfile extends React.Component {
                     updateParentState: () => this.updateState(),
                     user: this.state.user
                 });
+
+                this.loadGroups();
             })
         }).catch(e => console.error(e))
+    }
+
+    loadGroups() {
+        let groupIds = [
+            ...User.getInstance().user.gruppi_amministrati,
+            ...User.getInstance().user.gruppi_seguiti
+        ]
+
+        groupIds.forEach(group => {
+            fetch(APIConsts.apiEndpoint + "/gruppo/" + group.id)
+            .then(response => response.json())
+            .then((responseJSON) => {
+                let {myGroups = []} = this.state;
+
+                if (responseJSON.amministratori.find(el => {return el.id == User.getInstance().user.id}) != undefined) {
+                    responseJSON.role = 'Admin';
+                } else {
+                    responseJSON.role = 'Follower'
+                }
+
+                if (responseJSON.immagine_copertina == null || responseJSON.immagine_profilo == null) {
+                    console.warn(JSON.stringify(responseJSON.id))
+                }
+
+                myGroups.push(responseJSON);
+                this.setState({myGroups})
+            }).catch(e => console.log(e))
+        })
     }
 
     hideShowCheck(){
@@ -73,7 +104,7 @@ export default class MyProfile extends React.Component {
     }
 
     renderSaveButton(){
-        return(
+        return (
             <TouchableOpacity onPress={() => this.newImage()} style={{backgroundColor:'black', height:50}}>
                 <Text style={{color:'tomato', fontSize:18, marginLeft:30, marginTop:10}}>Save selected image </Text>
             </TouchableOpacity>
@@ -81,26 +112,24 @@ export default class MyProfile extends React.Component {
     }
 
     groupsVisibility = () => {
-        if(this.state.mygroupsVisible == true)
-        {
+        if(this.state.mygroupsVisible == true) {
             this.setState({mygroupsVisible: false})
-        }
-        else if (this.state.mygroupsVisible == false)
-        {
+        } else if (this.state.mygroupsVisible == false) {
             this.setState({mygroupsVisible: true})
         }
     }
 
     renderMyGroups(){
-        return (
-            <View style={{flex:1}}>
-                <MyGroupsComponent smallAvatar={require('../images/soccercup.jpeg')} onPress={() => NavigationSingleton.instance.navigate("MemberView")} groupname={'Calcio'} rating={'10'} role={'Admin'} memberCount={"13M"}/>
-                <MyGroupsComponent smallAvatar={require('../images/robot.jpeg')} groupname={'Tech'} rating={' 5'} role={'Member'} memberCount={"22K"}/>
-                <MyGroupsComponent smallAvatar={require('../images/tree.jpeg')} groupname={'Nature'} rating={' 5'} role={'Member'} memberCount={"132K"}/>
-                <MyGroupsComponent smallAvatar={require('../images/fashion.jpeg')} groupname={'OOTD'} rating={' 5'} role={'Member'} memberCount={"760K"}/>
-                <MyGroupsComponent smallAvatar={require('../images/stadium.jpeg')} groupname={'calciatoribrutticlub'} rating={' 5'} role={'Member'} memberCount={"20K"}/>
-            </View>
-        )
+        let {myGroups} = this.state;
+
+        return (<View style={{flex:1}}>
+                {myGroups.map(group => {
+                    return (
+                        <MyGroupsComponent key={group.id} smallAvatar={{uri: APIConsts.apiEndpoint + group.immagine_profilo.url}} 
+                            onPress={() => this.props.navigation.navigate("MemberView", {group})} 
+                            groupname={group.nome} rating={0} role={group.role} memberCount={group.amministratori.length + group.followers.length} />)
+                })}
+        </View>);
     }
 
     render() {
@@ -129,8 +158,11 @@ export default class MyProfile extends React.Component {
                         </View>
                     </View>
                 </View>
-                <MyGroupsBar iconName={this.state.mygroupsVisible? 'minus' : 'plus'} label={this.state.mygroupsVisible? 'nascondi' : 'visualizza'} onPress={this.groupsVisibility}/>
+                <MyGroupsBar title={'I miei gruppi'} 
+                    iconName={this.state.mygroupsVisible? 'minus' : 'plus'} label={this.state.mygroupsVisible? 'nascondi' : 'visualizza'}
+                    onPress={this.groupsVisibility}>
                     {this.state.mygroupsVisible? this.renderMyGroups() : null}
+                </MyGroupsBar>
                 {/* <MyPostsBar/> */}
                 <View style={{marginTop: 15, marginBottom: 20}}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('NewGroup')}

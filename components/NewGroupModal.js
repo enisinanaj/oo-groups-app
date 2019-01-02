@@ -1,7 +1,7 @@
 import React from 'react';
 import { KeyboardAvoidingView, Image, View, TouchableOpacity, Text, ActivityIndicator, StyleSheet, TextInput, ScrollView } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import Colors, { GlobalStyles } from '../constants/Colors';
+import Colors, { GlobalStyles, Shadow } from '../constants/Colors';
 import Feather from 'react-native-vector-icons/Feather';
 import ImageResizer from 'react-native-image-resizer'
 import ImagePicker from 'react-native-image-picker'
@@ -332,7 +332,7 @@ export default class NewGroupModal extends React.Component {
         let completed = savedAll == 60 + (10 * this.state.subCategories.length) + 20 + 20;
 
         if (completed) {
-            this.props.navigation.goBack();
+            this.props.navigation.navigate('Profile');
         }
     }
 
@@ -527,9 +527,13 @@ export default class NewGroupModal extends React.Component {
                 {saving && !completed ?
                     <View style={{position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, backgroundColor: 'rgba(250,250,250,0.6)',
                         flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flexDirection: 'column', justifyContent: 'center'}}>
-                            <ActivityIndicator size={"large"} />
-                            <Text style={{marginTop: 25}}>CREANDO IL NUOVO GRUPPO...</Text>
+                        <View style={[styles.popupCard, Shadow.cardShadow]}>
+                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                                <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+                                    <ActivityIndicator size={"large"} />
+                                    <Text style={{marginTop: 25, color: Colors.lighterText, fontSize: 12}}>CREANDO IL NUOVO GRUPPO..</Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
                 : null }
@@ -630,6 +634,16 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 5,
         right: 5
+    },
+
+    popupCard: {
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        width: 300,
+        borderRadius: 15,
+        height: 200,
+        alignSelf: 'center',
+        backgroundColor: 'white'
     },
 
     avatarHalo: {width: 160, height: 160, alignSelf: 'center', padding: 5, borderRadius: 80, marginTop: 10, backgroundColor: 'rgba(250,250,250,0.6)'},

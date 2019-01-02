@@ -46,6 +46,9 @@ const RNFS = require('react-native-fs');
       },
       MemberView:{
         screen: MemberView,
+        navigationOptions: {
+          header: null
+        }
       },
       Gallery:{
         screen: Gallery

@@ -1,8 +1,7 @@
-import React, {Component} from 'react';
-import { StyleSheet, Width,Text, height, View, Image, TouchableOpacity} from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {NavigationSingleton} from '../screens/login';
 import Colors from '../constants/Colors';
 
 
@@ -16,45 +15,44 @@ export default class MenuBarMember extends React.Component {
     }
 
     ShowHideInfos = () =>{
- 
-        if(this.state.infosVisible == true)
-        {
-          this.setState({infosVisible: false})
+        if(this.state.infosVisible == true) {
+            this.setState({infosVisible: false})
+        } else {
+            this.setState({infosVisible: true, rulesVisible: false})
         }
-        else
-        {
-          this.setState({infosVisible: true, rulesVisible: false})
-        }
-      }
-      ShowHideRules = () =>{
- 
-        if(this.state.rulesVisible == true)
-        {
-          this.setState({rulesVisible: false})
-        }
-        else
-        {
-          this.setState({rulesVisible: true, infosVisible: false})
-        }
+    }
 
-      }
-
+    ShowHideRules = () =>{
+        if(this.state.rulesVisible == true) {
+            this.setState({rulesVisible: false})
+        } else {
+            this.setState({rulesVisible: true, infosVisible: false})
+        }
+    }
 
     renderInfos(){
+        if (this.props.group.info == undefined || this.props.group.info == null || this.props.group.info == '') {
+            return null;
+        }
+
         return(
             <View style={{padding:10}}>
                 <Text>
-                Web safe colors emerged during the early era of the internet; a standardized palette of 216 colors that displayed consistently across all major browsers.
+                    {this.props.group.info.testo}
                 </Text>
             </View>
         )
     }
 
     renderRules(){
+        if (this.props.group.regole == undefined || this.props.group.regole == null || this.props.group.regole == '') {
+            return
+        }
+
         return(
             <View style={{padding:10}}>
                 <Text>
-                Rules  safe colors emerged during the early era of the internet; a standardized palette of 216 colors that displayed consistently across all major browsers.
+                    {this.props.group.regole.testo}
                 </Text>
             </View>
         )
@@ -63,22 +61,26 @@ export default class MenuBarMember extends React.Component {
 
   render() {
     return (
-        <View style={{flexDirection:'column'}}>
+        <View style={[{flexDirection:'column'}, this.props.style]}>
             <View style={styles.container}>
         
-                <TouchableOpacity onPress={this.ShowHideInfos} style={this.state.infosVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor:'#D4E6F1'}: {flexDirection:'row'}}>
-                    <Entypo style={{marginRight:7}} name={'info'} size={30} color={'black'}/>
-                    <Text style={{fontSize:18, marginTop:5, marginRight:10}}>info</Text>
-                </TouchableOpacity>
+                {this.props.group.info != undefined ? 
+                    <TouchableOpacity onPress={this.ShowHideInfos} style={this.state.infosVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor: '#D4E6F1'}: styles.menuStyle}>
+                        <Feather style={{marginRight:3}} name={'info'} size={16} color={Colors.lighterText}/>
+                        <Text style={{fontSize:13, color: Colors.lighterText}}>INFO</Text>
+                    </TouchableOpacity>
+                : null }
 
-                <TouchableOpacity onPress={this.ShowHideRules} style={this.state.rulesVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor:'#D4E6F1'}: {flexDirection:'row'}}>
-                    <Feather style={{marginRight:7}} name={'list'} size={30} color={'black'}/>
-                    <Text style={{fontSize:18, marginTop:5, marginRight:10}}>rules</Text>
-                </TouchableOpacity>
+                {this.props.group.regole != undefined ? 
+                    <TouchableOpacity onPress={this.ShowHideRules} style={this.state.rulesVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor: '#D4E6F1'}: styles.menuStyle}>
+                        <Feather style={{marginRight:3}} name={'flag'} size={16} color={Colors.lighterText}/>
+                        <Text style={{fontSize: 13, color: Colors.lighterText}}>REGOLE</Text>
+                    </TouchableOpacity>
+                : null }
 
-                <TouchableOpacity onPress={() => NavigationSingleton.instance.navigate("Gallery")} style={{flexDirection:'row'}}>
-                    <Entypo style={{marginRight:7}} name={'picasa'} size={30} color={'black'}/>
-                    <Text style={{fontSize:18, marginTop:5, marginRight:10}}>media</Text>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate("Gallery", this.props.group)} style={styles.menuStyle}>
+                    <Feather style={{marginRight:3}} name={'image'} size={16} color={Colors.lighterText}/>
+                    <Text style={{fontSize:13, color: Colors.lighterText}}>MEDIA</Text>
                 </TouchableOpacity>
 
             </View>
@@ -90,17 +92,23 @@ export default class MenuBarMember extends React.Component {
   
 }
 
-
-
-
 const styles = StyleSheet.create({
- 
-container:{
-    flexDirection:'row',
-    borderTopWidth:1,
-    borderColor:Colors.profileBorder,
-    padding:10,
-    justifyContent:'space-between',
-},
+    container:{
+        flexDirection:'row',
+        borderBottomWidth:1,
+        borderColor: Colors.lightBorder,
+        // paddingVertical: 10,
+        // paddingHorizontal: 20,
+        justifyContent:'space-between',
+    },
 
+    menuStyle: {
+        backgroundColor: '#fafafa',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingVertical: 14,
+        borderRightWidth: 1,
+        borderRightColor: Colors.lightBorder
+    }
 });

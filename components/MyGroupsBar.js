@@ -16,16 +16,21 @@ export default class MyGroupsBar extends React.Component {
     
   render() {
     return (
-
-        <View style={styles.container}>
-            <View>
-                <Text style={{fontSize:18, color: Colors.darkTitle}}>I miei gruppi</Text>
+        <View style={this.props.style}>
+            <View style={[styles.container, this.props.titleStyle]}>
+                <View>
+                    <Text style={{fontSize:18, color: Colors.darkTitle}}>{this.props.title}</Text>
+                </View>
+                {this.props.rightViewVisible == undefined || ( this.props.rightViewVisible != undefined && this.props.rightViewVisible ) ? 
+                    <TouchableOpacity onPress={() => this.props.onPress()} style={{flexDirection: 'row'}}>
+                        <Text style={{marginRight: 5, fontSize: 11, color: Colors.lighterText, marginTop: 4}}>{this.props.label}</Text>
+                        <Entypo style={{justifyContent:'flex-end'}} name={this.props.iconName} size={22} color={Colors.darkGrey}/>
+                    </TouchableOpacity>
+                : null}
             </View>
-            <TouchableOpacity onPress={() => this.props.onPress()} style={{flexDirection: 'row'}}>
-                <Text style={{marginRight: 5, fontSize: 11, color: Colors.lighterText, marginTop: 4}}>{this.props.label}</Text>
-                <Entypo style={{justifyContent:'flex-end'}} name={this.props.iconName} size={22} color={Colors.darkGrey}/>
-            </TouchableOpacity>
-       </View>
+            
+            {this.props.children}
+        </View>
     );
   }
   
