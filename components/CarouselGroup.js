@@ -8,21 +8,21 @@ export default class CarouselGroup extends React.Component {
         super(props);
         this.state = {
             entries : [
-            {
-                slide:'https://ae01.alicdn.com/kf/HTB1TM7AQFXXXXcuXFXXq6xXFXXXh/2017-Juventus-fitness-T-Shirt-3d-printed-t-shirts-men-women-Long-sleeve-tumblr-t-Shirt.jpg_640x640.jpg',
-                title:"T-shirt Juventus",
-                description:'Buy this new T-shirt with juve logo just for 5 dollars.',
-            },
-            {   
-                slide:'https://images-na.ssl-images-amazon.com/images/I/71vYowUvGZL._SL1500_.jpg',
-                title:"Soccer ball logo Juventus",
-                description:'Buy this new shirt with juve logo just for 5 dollars.',
-            },
-            {   
-                slide:'https://www.musicolandia.it/2480-large_default/accendino-a-petrolio-tristar-mod-football---juventus-3-stars.jpg',
-                title:"Accendino logo Juventus",
-                description:'Buy this new lighter with juve logo just for 5 dollars.',
-            },
+                {
+                    slide:'https://ae01.alicdn.com/kf/HTB1TM7AQFXXXXcuXFXXq6xXFXXXh/2017-Juventus-fitness-T-Shirt-3d-printed-t-shirts-men-women-Long-sleeve-tumblr-t-Shirt.jpg_640x640.jpg',
+                    title:"T-shirt Juventus",
+                    description:'Buy this new T-shirt with juve logo just for 5 dollars.',
+                },
+                {   
+                    slide:'https://images-na.ssl-images-amazon.com/images/I/71vYowUvGZL._SL1500_.jpg',
+                    title:"Soccer ball logo Juventus",
+                    description:'Buy this new shirt with juve logo just for 5 dollars.',
+                },
+                {   
+                    slide:'https://www.musicolandia.it/2480-large_default/accendino-a-petrolio-tristar-mod-football---juventus-3-stars.jpg',
+                    title:"Accendino logo Juventus",
+                    description:'Buy this new lighter with juve logo just for 5 dollars.',
+                },
             ]
         }
     }
@@ -67,7 +67,6 @@ export default class CarouselGroup extends React.Component {
 
 const horizontalMargin = 10;
 const slideWidth = 280;
-
 const sliderWidth = Dimensions.get('window').width;
 const itemWidth = slideWidth + horizontalMargin * 2;
 const itemHeight = 200;
@@ -80,6 +79,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: horizontalMargin
         // other styles for the item container
     },
+
     slideInnerContainer: {
         width: slideWidth,
         flex: 1,
@@ -87,10 +87,9 @@ const styles = StyleSheet.create({
         // other styles for the inner container
     },
 
- 
-    container:{
-    flexDirection:'column',
-    margin:5,
-},
+    container: {
+        flexDirection:'column',
+        margin:5,
+    },
 
 });

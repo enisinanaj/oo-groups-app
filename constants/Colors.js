@@ -13,7 +13,8 @@ const Colors = {
     darkTitle: '#4e4e4e',
     accent1: '#FF671B',
     lightGreyBackground: '#F5F5F5',
-    lighterText: '#8b8b8b'
+    lighterText: '#8b8b8b',
+    white: '#FFFFFF'
 }
 
 export default Colors;

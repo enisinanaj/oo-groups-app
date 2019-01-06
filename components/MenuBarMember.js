@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import Entypo from 'react-native-vector-icons/Entypo';
 import Colors from '../constants/Colors';
 
 
@@ -36,8 +35,8 @@ export default class MenuBarMember extends React.Component {
         }
 
         return(
-            <View style={{padding:10}}>
-                <Text>
+            <View style={{padding:20, borderBottomColor: '#f5f5f5', borderBottomWidth: 0.5, marginBottom: 10}}>
+                <Text style={{fontSize: 11, color: Colors.darkTitle}}>
                     {this.props.group.info.testo}
                 </Text>
             </View>
@@ -50,8 +49,8 @@ export default class MenuBarMember extends React.Component {
         }
 
         return(
-            <View style={{padding:10}}>
-                <Text>
+            <View style={{padding:20, borderBottomColor: '#f5f5f5', borderBottomWidth: 0.5, marginBottom: 10}}>
+                <Text style={{fontSize: 11, color: Colors.darkTitle}}>
                     {this.props.group.regole.testo}
                 </Text>
             </View>
@@ -65,14 +64,16 @@ export default class MenuBarMember extends React.Component {
             <View style={styles.container}>
         
                 {this.props.group.info != undefined ? 
-                    <TouchableOpacity onPress={this.ShowHideInfos} style={this.state.infosVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor: '#D4E6F1'}: styles.menuStyle}>
+                    <TouchableOpacity onPress={this.ShowHideInfos} 
+                        style={[this.state.infosVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor: '#D4E6F1'}: {}, styles.menuStyle]}>
                         <Feather style={{marginRight:3}} name={'info'} size={16} color={Colors.lighterText}/>
                         <Text style={{fontSize:13, color: Colors.lighterText}}>INFO</Text>
                     </TouchableOpacity>
                 : null }
 
                 {this.props.group.regole != undefined ? 
-                    <TouchableOpacity onPress={this.ShowHideRules} style={this.state.rulesVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor: '#D4E6F1'}: styles.menuStyle}>
+                    <TouchableOpacity onPress={this.ShowHideRules}
+                        style={[this.state.rulesVisible? {flexDirection:'row', borderBottomWidth:1, borderBottomColor: '#D4E6F1'}: {}, styles.menuStyle]}>
                         <Feather style={{marginRight:3}} name={'flag'} size={16} color={Colors.lighterText}/>
                         <Text style={{fontSize: 13, color: Colors.lighterText}}>REGOLE</Text>
                     </TouchableOpacity>
@@ -109,6 +110,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 14,
         borderRightWidth: 1,
-        borderRightColor: Colors.lightBorder
+        borderRightColor: Colors.lightBorder,
     }
 });
