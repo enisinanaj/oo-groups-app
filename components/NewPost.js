@@ -4,18 +4,22 @@ import CameraRollPicker from 'react-native-camera-roll-picker';
 import CategoryPicker from './CategoryPicker';
 import Colors from '../constants/Colors';
 
-
-
 export default class NewPost extends React.Component {
+    static navigationOptions = () => {
+        return {
+          headerTitle: 'Nuovo Post'
+        }
+    }
+
     constructor(props) {
         super(props);
     
         this.state = {
             modalVisible: false,
             num:0,
+            group: this.props.navigation.state.params.group
         }
     }
-
 
     setModalVisible(visible) {
         this.setState({modalVisible: visible});
@@ -29,18 +33,6 @@ export default class NewPost extends React.Component {
     render() {
         return (
             <View style={{backgroundColor:'white', flex:1}}>
-                <View style={{marginTop: 22, }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.setModalVisible(!this.state.modalVisible);
-                        }}>
-                        <Text style={{fontSize:20, color: Colors.main, marginTop:10, marginLeft:10}}>Cancel</Text>
-                    </TouchableOpacity>
-
-                    <View style={{padding:10, alignItems:'center',borderBottomWidth:1, borderBottomColor: Colors.lightBorder,}}>
-                        <Text style={{fontSize:18, fontWeight:'bold'}}>Condividi con {this.props.group.nome}</Text>
-                    </View>
-                </View>
                 <View style={{alignItems:'center', paddingTop:20, paddingBottom:20,borderBottomWidth:1, borderBottomColor: Colors.profileBorder,}}>
                     <CategoryPicker title={'Seleziona categoria'} />
                 </View>

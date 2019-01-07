@@ -20,29 +20,13 @@ export default class ShareButton extends React.Component {
         this.setState({modalVisible: !this.state.modalVisible})
     }
 
-
-  render() {
-        // let buttons = [
-        //     {title: 'Condividi', onPress: () => {this.setState({newPostModalVisible: true})}}
-        // ]
-
+    render() {
         return (
             <View style={[styles.onYourMindContainer]}>
-                <OnYourMind onFocus={() => this.setState({newPostModalVisible: true})}/>
-                {/* <ButtonBar ref='buttonBar' buttons={buttons}/> */}
-                <Modal
-                    animationType="slide"
-                    transparent={false}
-                    visible={this.state.newPostModalVisible}
-                    onRequestClose={() => {
-                        alert('Modal has been closed.');
-                    }}>
-                    <NewPost group={this.props.group} close={() => this.setState({newPostModalVisible: false})} />
-                </Modal>
+                <OnYourMind onFocus={() => this.props.navigation.navigate('NewPost', {group: this.props.group})}/>
             </View>
         )
-  }
-  
+    }
 }
 
 const styles = StyleSheet.create({
@@ -53,7 +37,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 5,
     },
-
+    
     fakeTextInput: {
         fontSize: 16,
         color: Colors.lighterText,

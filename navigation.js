@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ActivityIndicator, TouchableOpacity, Text, Dimensions, ImageBackground} from 'react-native';
+import {View, TouchableOpacity, Text, Dimensions} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import { TabNavigator, TabBarBottom, createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
 import Login from './screens/login';
@@ -15,7 +15,7 @@ import UsernameSetUp from './screens/UsernameSetUp';
 import Posts from './screens/Posts';
 import CompletePostCard from './screens/CompletePostCard';
 import NotificationsScreen from './screens/NotificationsScreen';
-import MemberView from './screens/memberView';
+import memberView from './screens/memberView';
 import ListMembers from './screens/ListMembers'
 import Settings from './screens/Settings';
 import MyGroups from './screens/MyGroups';
@@ -31,9 +31,10 @@ import SelezioneCategoriaGruppo from './screens/SelezioneCategoriaGruppo';
 import SottoCategorieGruppo from './screens/SottoCategorieGruppo';
 import Colors from './constants/Colors';
 import { Bubbles, Bars } from 'react-native-loader';
+import NewPost from './components/NewPost';
 
-const {width, height} = Dimensions.get('window');
-const RNFS = require('react-native-fs');
+  const {width, height} = Dimensions.get('window');
+  const RNFS = require('react-native-fs');
 
   const HomeStack = createStackNavigator(
     {
@@ -43,19 +44,21 @@ const RNFS = require('react-native-fs');
       SinglePost: {
         screen: CompletePostCard
       },
-      ListMembers:{
+      ListMembers: {
         screen: ListMembers,
       },
-      MemberView:{
-        screen: MemberView,
+      MemberView: {
+        screen: memberView,
         navigationOptions: {
           header: null
         }
       },
+      NewPost: {
+        screen: NewPost
+      },
       Gallery:{
         screen: Gallery
       },
-      
     },
     {
       initialRouteName: 'Home',

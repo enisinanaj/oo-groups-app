@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, ScrollView, View} from 'react-native';
 import MenuBarMember from '../components/MenuBarMember';
 import GroupProfileHeader from '../components/GroupProfileHeader';
@@ -7,8 +7,41 @@ import CategoryDatas from '../components/CategoryDatas';
 import ShareButton from '../components/ShareButton';
 import Colors from '../constants/Colors';
 import MyGroupsBar from '../components/MyGroupsBar'
+import { withNavigationFocus } from 'react-navigation'
 
-export default Profile = (props) => {
+class MemberView extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            group: this.props.navigation.state.params.group
+        }
+    }
+
+    render() {
+        let {group} = this.state;
+    
+        return (
+            <ScrollView style={styles.container}>
+                <GroupProfileHeader group={group} />
+    
+                <MenuBarMember style={{marginTop: 10}} group={group} navigation={this.props.navigation} />
+                {/* <NotesBar /> re-enable when notes will be available in the backend */}
+                <ShareButton group={group} navigation={this.props.navigation} />
+                <MyGroupsBar style={{marginTop: 25}} titleStyle={{marginBottom: 10}} title={"CATEGORIE"} rightViewVisible={false}>
+                    { group.categorie.map(el => {
+                        return <CategoryDatas key={el.id} onPress={() => this.props.navigation.navigate("Posts")} 
+                            categoryTitle={el.descrizione_categoria} yourVote={0} generalRating={'0'}/>
+                    })}
+                </MyGroupsBar>
+                <View style={{height: 40, flexDirection: 'row', justifyContent: 'center'}}></View>
+            </ScrollView>
+        );
+    }
+}
+
+export default MemberView = (props) => {
     let {group} = props.navigation.state.params;
 
     return (
@@ -17,7 +50,7 @@ export default Profile = (props) => {
 
             <MenuBarMember style={{marginTop: 10}} group={group} navigation={props.navigation} />
             {/* <NotesBar /> re-enable when notes will be available in the backend */}
-            <ShareButton group={group}/>
+            <ShareButton group={group} navigation={props.navigation} />
             <MyGroupsBar style={{marginTop: 25}} titleStyle={{marginBottom: 10}} title={"CATEGORIE"} rightViewVisible={false}>
                 { group.categorie.map(el => {
                     return <CategoryDatas key={el.id} onPress={() => props.navigation.navigate("Posts")} 
@@ -44,3 +77,5 @@ const styles = StyleSheet.create({
         marginHorizontal: 20
     },
 });
+
+//export default withNavigationFocus(MemberView)
