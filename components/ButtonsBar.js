@@ -36,9 +36,9 @@ export default class ButtonBar extends Component {
         return buttons.map((button, i) => {
             return (
                 <View key={i} style={styles.buttonItem}>
-                    <View onPress={button.onPress} style={button.noOp ? DisabledStyle.disabled : {}}>
+                    <TouchableOpacity onPress={button.onPress} style={button.noOp ? DisabledStyle.disabled : {}}>
                         <Text style={styles.text}>{button.title}</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
             )
         })

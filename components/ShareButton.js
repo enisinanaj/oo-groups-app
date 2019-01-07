@@ -22,40 +22,28 @@ export default class ShareButton extends React.Component {
 
 
   render() {
-        // return (
-            // <View style={styles.container}>
-            //     <Text style={styles.fakeTextInput}>Condividi la tua opinione con il gruppo...</Text>
-            //     <SimpleButton title={'Condividi'} onPress={() => this.toggleModal()} />
-            // </View>
-        // );
-
         let buttons = [
-            {title: 'Condividi', onPress: () => {}}
+            {title: 'Condividi', onPress: () => {this.setState({newPostModalVisible: true})}}
         ]
 
         return (
-            <View>
-                <TouchableOpacity style={[styles.onYourMindContainer, Shadow.cardShadow]} onPress={() => this.setState({newPostModalVisible: true})}>
-                    <OnYourMind onFocus={() => this.setState({modalPost: true})}/>
-                    <ButtonBar ref='buttonBar' buttons={buttons}/>
-                    <Modal
-                            animationType="none"
-                            transparent={false}
-                            visible={this.state.newPostModalVisible}
-                            onRequestClose={() => {
-                                alert('Modal has been closed.');
-                            }}>
-                            <NewPost group={this.props.group} />
-                    </Modal>
-                </TouchableOpacity>
+            <View style={[styles.onYourMindContainer, Shadow.cardShadow]}>
+                <OnYourMind onFocus={() => this.setState({modalPost: true})}/>
+                <ButtonBar ref='buttonBar' buttons={buttons}/>
+                <Modal
+                        animationType="none"
+                        transparent={false}
+                        visible={this.state.newPostModalVisible}
+                        onRequestClose={() => {
+                            alert('Modal has been closed.');
+                        }}>
+                        <NewPost group={this.props.group} />
+                </Modal>
             </View>
         )
   }
   
 }
-
-
-
 
 const styles = StyleSheet.create({
  

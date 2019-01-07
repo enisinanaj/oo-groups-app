@@ -216,17 +216,33 @@ var postProfilePicture = (responseJSON, localProfilePicture) => {
 }
 
 var finalizeUserData = (user) => {
-    fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + user.indirizzo_email)
+    return fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + user.indirizzo_email)
     .then(result => result.json())
     .then(result => {
         if (result.length == 0) {
              registerNewUser(user)
              .then(result => User.getInstance().user = result)
-             .then(() => User.getInstance().registered = true);
+             .then(() => {
+                 User.getInstance().registered = true;
+                 User.getInstance().user.oldProfile = false;
+
+                 return User.getInstance().user
+            });
         } else {
-            User.getInstance().user = result[0];
-            User.getInstance().user.foto_profilo = APIConsts.apiEndpoint + User.getInstance().user.foto_profilo.url
+            User.getInstance().setUser(result[0]);
             User.getInstance().user.registered = true;
+            User.getInstance().user.oldProfile = true;
+
+            // save user instance
+            return RNFS.mkdir(RNFS.DocumentDirectoryPath + '/.user/').then(() => {
+                const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
+                return RNFS.writeFile(path, user.id + '\n' + user.indirizzo_email, 'utf8')
+                .then(() => {
+                    return User.getInstance().user
+                })
+                .catch(e => console.error(e))
+            })
+            .catch(e => console.error(e));
         }
     }).catch(e => {
         console.warn(e)

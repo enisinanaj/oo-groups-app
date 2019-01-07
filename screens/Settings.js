@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, View, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, ActivityIndicator} from 'react-native';
-import { CheckBox } from 'react-native-elements';
 import Colors from '../constants/Colors';
 import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
@@ -16,6 +15,8 @@ const options = {
       path: 'images',
     },
 };
+
+const RNFS = require('react-native-fs')
 
 export default class Settings extends React.Component {
     static navigationOptions = ({navigation}) => {
@@ -201,9 +202,6 @@ export default class Settings extends React.Component {
                 if (contacts[key].id != undefined) {
                     // is update or delete
                     if (contacts[key].url == "") {
-                        //is delete
-                        console.warn("DELETE: " + APIConsts.apiEndpoint + "/contatti/" + contacts[key].id);
-
                         fetch(APIConsts.apiEndpoint + "/contatti/" + contacts[key].id, {
                             method: 'DELETE',
                             headers: {
@@ -289,6 +287,14 @@ export default class Settings extends React.Component {
         contacts[ContactTypes.getNameForKey(type)].changed = true;
 
         this.enableSave();
+    }
+
+    logOut() {
+        const path = RNFS.DocumentDirectoryPath + '/.user/.profile';
+        RNFS.unlink(path).then(() => {
+            this.props.navigation.navigate('UnprotectedViews');
+        })
+        .catch(e => console.warn(e))
     }
       
     render() {
@@ -388,19 +394,6 @@ export default class Settings extends React.Component {
                         clearButtonMode={'while-editing'}
                     />
                 </View>
-                <View style={styles.fieldContainer}>
-                    <Text style={styles.fieldLabel}>
-                        E-MAIL
-                    </Text>
-                    <TextInput
-                        value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
-                        maxLength = {60}
-                        keyboardAppearance={'default'}
-                        autoCapitalize={"none"}
-                        style={styles.singleInput}
-                        clearButtonMode={'while-editing'}
-                    />
-                </View>
 
                 {/* <Text style={styles.sectionHeader}>Privacy</Text>
 
@@ -483,6 +476,35 @@ export default class Settings extends React.Component {
                         style={styles.singleInput}
                         clearButtonMode={'while-editing'}
                     />
+                </View>
+
+                <Text style={styles.sectionHeader}>Account</Text>
+
+                <View style={styles.fieldContainer}>
+                    <Text style={styles.fieldLabel}>
+                        E-MAIL
+                    </Text>
+                    <TextInput
+                        value={user.indirizzo_email.indexOf('instagram') >= 0 ? '' : user.indirizzo_email}
+                        maxLength = {60}
+                        keyboardAppearance={'default'}
+                        autoCapitalize={"none"}
+                        style={styles.singleInput}
+                        clearButtonMode={'while-editing'}
+                    />
+                </View>
+
+                <View style={styles.fieldContainer}>
+                    <TouchableOpacity onPress={() => this.logOut()} style={{flexDirection: 'row', justifyContent: 'space-between', flex: 1}}>
+                        <Text style={styles.fieldLabel}>
+                            LOGOUT
+                        </Text>
+                        <Feather name={"log-out"} size={22} color={Colors.lighterText} style={{marginRight: 10}} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={[styles.bottomSpace, {height: 40, flex: 1, flexDirection: "row"}]}>
+
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

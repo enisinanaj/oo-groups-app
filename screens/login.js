@@ -10,6 +10,7 @@ import User from '../controllers/user/instance';
 import {onGoogleLogin, onFacebookLogin, onTwitterLogin, onInstagramLogin, AUTH_PROVIDERS} from '../controllers/user/UserController';
 
 const dimensions = Dimensions.get("window");
+const RNFS = require('react-native-fs')
 
 export class  NavigationSingleton {
     static instance;
@@ -26,9 +27,18 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            backgroundImage: {uri: RNFS.DocumentDirectoryPath + `/.unsplashBg.jpg`},
+        }
     }
 
   goToTerms() {
+      if (User.getInstance().user.oldProfile) {
+          this.props.navigation.navigate('ProtectedViews');
+          return; 
+      }
+
       if (User.getInstance().user.registered && User.getInstance().user.tos_accettato) {
           this.props.navigation.navigate('UsernameSetUp');
       } else {
@@ -54,12 +64,12 @@ export default class Login extends Component {
 
   render() {
     return (
-      <ImageBackground source={require('../assets/images/login_bg.jpg')} style={{flex: 1, resizeMode: 'contain', width: dimensions.width}} resizeMethod={"resize"}>
+      <ImageBackground source={this.state.backgroundImage} style={{flex: 1, resizeMode: 'contain', width: dimensions.width}} resizeMethod={"resize"}>
           <View style={styles.backgroundOverlay}></View>
           <View style={[styles.container, {position: 'absolute', top: 0, backgroundColor: 'transparent'}]}>
             <View style={styles.logoContainer}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>twadle</Text>
+                    <Text style={[styles.title, Shadow.filterShadow]}>twadle</Text>
                 </View>
             </View>
             <View style={styles.socialContainer}>

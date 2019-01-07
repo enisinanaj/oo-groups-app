@@ -85,10 +85,6 @@ export default class MyProfile extends React.Component {
                     responseJSON.role = 'Follower'
                 }
 
-                if (responseJSON.immagine_copertina == null || responseJSON.immagine_profilo == null) {
-                    console.warn(JSON.stringify(responseJSON.id))
-                }
-
                 myGroups.push(responseJSON);
                 this.setState({myGroups})
             }).catch(e => console.log(e))
@@ -138,7 +134,9 @@ export default class MyProfile extends React.Component {
                 <StatusBar barStyle={'dark-content'} />
                 <View style={styles.profileIntro}>
                     <Image style={styles.coverImage} 
-                        source={{uri: this.state.user.foto_copertina == null ? '' : this.state.user.foto_copertina}} />
+                        source={{uri: 
+                                this.state.user.foto_copertina == null || typeof this.state.user.foto_copertina == 'object' 
+                                ? '' : this.state.user.foto_copertina}} />
                     <View style={styles.headerBar}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={{marginLeft: 10, width: 30}}></View>
@@ -201,8 +199,9 @@ const styles = StyleSheet.create({
     },
     username: {
         fontSize: 24,
+        fontWeight: '800',
         marginTop: 5,
-        color: '#4e4e4e',
+        color: '#000', //'#4e4e4e',
         marginBottom: 10,
         textAlign: 'center',
         marginBottom: 20

@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, Image, TextInput,TouchableOpacity} from 'react-native';
+import { NavigationActions, StackActions } from 'react-navigation'
 import Colors, { Shadow } from '../constants/Colors';
 import User from '../controllers/user/instance'
 import Feather from 'react-native-vector-icons/Feather';
@@ -96,10 +97,10 @@ export default class UsernameSetUp extends React.Component {
               this.setState({foto_profilo: response[0].url.replace("http://localhost:1337", APIConsts.apiEndpoint)})
           })
           .then(() => {
-            User.getInstance().user = {
+            User.getInstance().setUser({
               ...this.state,
               foto_profilo_changed: undefined
-            }
+            })
           })
           .catch(e => console.error(e))
       }
@@ -107,8 +108,6 @@ export default class UsernameSetUp extends React.Component {
     .then(() => {
         this.props.navigation.navigate('ProtectedViews');
     })
-
-    //TODO: update user profile photo in chain after username, and only then go to next view.
   }
 
   render() {

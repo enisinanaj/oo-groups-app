@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ActivityIndicator, TouchableOpacity, Text} from 'react-native';
+import {View, ActivityIndicator, TouchableOpacity, Text, Dimensions, ImageBackground} from 'react-native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import { TabNavigator, TabBarBottom, createStackNavigator } from 'react-navigation'; // Version can be specified in package.json
 import Login from './screens/login';
@@ -30,7 +30,9 @@ import NewGroupModal from './components/NewGroupModal';
 import SelezioneCategoriaGruppo from './screens/SelezioneCategoriaGruppo';
 import SottoCategorieGruppo from './screens/SottoCategorieGruppo';
 import Colors from './constants/Colors';
+import { Bubbles, Bars } from 'react-native-loader';
 
+const {width, height} = Dimensions.get('window');
 const RNFS = require('react-native-fs');
 
   const HomeStack = createStackNavigator(
@@ -111,7 +113,7 @@ const RNFS = require('react-native-fs');
           return {
             header: null
           }
-        }
+        },
       },
       AdminView:{
         screen: AdminView,
@@ -285,6 +287,9 @@ export default class MainNavigation extends React.Component {
 
         fetch(APIConsts.apiEndpoint + "/utente?indirizzo_email=" + User.getInstance().user.email)
         .then(response => response.json())
+        .then(response => {
+          return this.downloadLoginBg().then(() => response)
+        })
         .then(responseJson => {
           if (responseJson.length > 0) {
             User.getInstance().setUser(responseJson[0]);
@@ -316,15 +321,45 @@ export default class MainNavigation extends React.Component {
           }
         })
     })
+    .catch((e) => {
+      this.downloadLoginBg().then(() => this.setState({loading: false}))
+    })
+  }
+
+  downloadLoginBg() {
+    const localLoginBackground = RNFS.DocumentDirectoryPath + `/.unsplashBg.jpg`
+
+    return fetch('https://api.unsplash.com/photos/random?query=group&client_id=734acfe1a9aa0c7fd5bca9a28412aeefa77a8a1ab962f65c88e9671b942dd703&orientation=portrait')
+    .then(response => response.json())
+    .then(response => {
+      return RNFS.downloadFile({
+          fromUrl: response.urls.raw + `&w=${width}&h=${height}&fm=jpg&fit=crop&q=50`,
+          toFile: localLoginBackground,
+          background: true,
+          begin: e => contentLength = e.contentLength
+      }).promise
+      .then(e => {
+          while (e.bytesWritten < contentLength) {
+              // stop
+          }
+      })
+      .catch(e => console.error(e))
+    })
   }
 
   render() {
     if (this.state.loading) {
-      return (<View style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}>
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <ActivityIndicator />
-        </View>
-      </View>)
+      return (<View source={require('./assets/images/login_bg.jpg')} 
+              style={{flex: 1, resizeMode: 'contain', width, flexDirection: 'row', justifyContent: 'center'}} resizeMethod={"resize"}>
+            <View style={{flexDirection: 'column', justifyContent: 'center'}}>
+              <Text style={{color: '#000', fontWeight: '800', fontSize: 34, marginBottom: 20}}>twadle</Text>
+              {/* <ActivityIndicator /> */}
+              {/* <Bars color={'#000'} /> */}
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Bubbles color={'#000'} />
+              </View>
+            </View>
+        </View>)
     }
     return (
       <MainNavigationComponent initialRouteName={this.state.initialRouteName} loginInitialRouteName={this.state.loginInitialRouteName} /> )

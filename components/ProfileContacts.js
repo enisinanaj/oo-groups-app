@@ -37,7 +37,7 @@ export default class ProfileContacts extends React.Component {
             let contactType = ContactTypes.getNameForKey(contact.tipocontatti);
 
             render.push(<TouchableOpacity key={i} style={{margin:5}} onPress={() => this.openUrl(contact)}>
-                <FontAwesome name={contactType.replace("Username", "")} size={20} color={Colors.darkGrey}/>
+                <FontAwesome name={contactType.replace("Username", "")} size={20} color={'#000'}/>
             </TouchableOpacity>);
         })
 

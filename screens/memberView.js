@@ -20,7 +20,7 @@ export default Profile = (props) => {
             <ShareButton group={group}/>
             <MyGroupsBar style={{marginTop: 25}} titleStyle={{marginBottom: 10}} title={"CATEGORIE"} rightViewVisible={false}>
                 { group.categorie.map(el => {
-                    return <CategoryDatas onPress={() => props.navigation.navigate("Posts")} 
+                    return <CategoryDatas key={el.id} onPress={() => props.navigation.navigate("Posts")} 
                         categoryTitle={el.descrizione_categoria} yourVote={0} generalRating={'0'}/>
                 })}
             </MyGroupsBar>

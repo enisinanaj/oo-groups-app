@@ -7,6 +7,7 @@ import ImageResizer from 'react-native-image-resizer'
 import ImagePicker from 'react-native-image-picker'
 import APIConsts from '../constants/APIConsts';
 import User from '../controllers/user/instance';
+import { Bubbles } from 'react-native-loader'
 
 const options = {
     title: 'Seleziona',
@@ -242,7 +243,7 @@ export default class NewGroupModal extends React.Component {
     searchUsers(q) {
         this.setState({adminQuery: q})
 
-        if (q == '' || q == undefined || q == null || q.length < 4) {
+        if (q == '' || q == undefined || q == null || q.length < 3) {
             this.setState({admins: []})
             return;
         }
@@ -530,7 +531,9 @@ export default class NewGroupModal extends React.Component {
                         <View style={[styles.popupCard, Shadow.cardShadow]}>
                             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                                 <View style={{flexDirection: 'column', justifyContent: 'center'}}>
-                                    <ActivityIndicator size={"large"} />
+                                    <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                                        <Bubbles color={'#000'} />
+                                    </View>
                                     <Text style={{marginTop: 25, color: Colors.lighterText, fontSize: 12}}>CREANDO IL NUOVO GRUPPO..</Text>
                                 </View>
                             </View>
