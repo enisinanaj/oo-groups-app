@@ -1,19 +1,18 @@
 import React from 'react';
-import {StyleSheet, StatusBar,Text, ScrollView, View, Image, TouchableOpacity, Modal} from 'react-native';
+import {StyleSheet, StatusBar,Text, ScrollView, View, Image, TouchableOpacity} from 'react-native';
 import ProfilePicture from '../components/ProfilePicture';
 import BioBox from '../components/bioBox';
 import ProfileContacts from '../components/ProfileContacts';
 import MyGroupsBar from '../components/MyGroupsBar';
 import MyGroupsComponent from '../components/MyGroupsComponent';
-import MyPostsBar from '../components/MyPostsBar';
-import { NavigationSingleton } from './login';
 import User from '../controllers/user/instance';
 import APIConsts from '../constants/APIConsts';
 import Feather from 'react-native-vector-icons/Feather';
 import Colors, {GlobalStyles} from '../constants/Colors';
+import { withNavigationFocus } from 'react-navigation';
 
 
-export default class MyProfile extends React.Component {
+class MyProfile extends React.Component {
     static navigationOptions = ({navigation}) => {
         let {params = {}} = navigation.state;
         
@@ -72,12 +71,12 @@ export default class MyProfile extends React.Component {
             ...User.getInstance().user.gruppi_amministrati,
             ...User.getInstance().user.gruppi_seguiti
         ]
+        let myGroups = [];
 
         groupIds.forEach(group => {
             fetch(APIConsts.apiEndpoint + "/gruppo/" + group.id)
             .then(response => response.json())
             .then((responseJSON) => {
-                let {myGroups = []} = this.state;
 
                 if (responseJSON.amministratori.find(el => {return el.id == User.getInstance().user.id}) != undefined) {
                     responseJSON.role = 'Admin';
@@ -248,3 +247,5 @@ const styles = StyleSheet.create({
         flex: 1
     }
 })
+
+export default withNavigationFocus(MyProfile)

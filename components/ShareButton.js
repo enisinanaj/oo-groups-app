@@ -22,22 +22,22 @@ export default class ShareButton extends React.Component {
 
 
   render() {
-        let buttons = [
-            {title: 'Condividi', onPress: () => {this.setState({newPostModalVisible: true})}}
-        ]
+        // let buttons = [
+        //     {title: 'Condividi', onPress: () => {this.setState({newPostModalVisible: true})}}
+        // ]
 
         return (
-            <View style={[styles.onYourMindContainer, Shadow.cardShadow]}>
-                <OnYourMind onFocus={() => this.setState({modalPost: true})}/>
-                <ButtonBar ref='buttonBar' buttons={buttons}/>
+            <View style={[styles.onYourMindContainer]}>
+                <OnYourMind onFocus={() => this.setState({newPostModalVisible: true})}/>
+                {/* <ButtonBar ref='buttonBar' buttons={buttons}/> */}
                 <Modal
-                        animationType="none"
-                        transparent={false}
-                        visible={this.state.newPostModalVisible}
-                        onRequestClose={() => {
-                            alert('Modal has been closed.');
-                        }}>
-                        <NewPost group={this.props.group} />
+                    animationType="slide"
+                    transparent={false}
+                    visible={this.state.newPostModalVisible}
+                    onRequestClose={() => {
+                        alert('Modal has been closed.');
+                    }}>
+                    <NewPost group={this.props.group} close={() => this.setState({newPostModalVisible: false})} />
                 </Modal>
             </View>
         )
@@ -64,10 +64,11 @@ const styles = StyleSheet.create({
     onYourMindContainer: {
         marginTop: 10,
         marginBottom: 6,
-        marginRight: 7,
-        marginLeft: 7,
+        marginHorizontal: 0,
         padding: 0,
-        borderRadius: 14,
+        borderRadius: 0,
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#f5f5f5'
     },
 
 });
