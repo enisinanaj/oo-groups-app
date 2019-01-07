@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView} from 'react-native';
+import { StyleSheet, ScrollView, View} from 'react-native';
 import MenuBarMember from '../components/MenuBarMember';
 import GroupProfileHeader from '../components/GroupProfileHeader';
 import NotesBar from '../components/NotesBar';
@@ -16,7 +16,7 @@ export default Profile = (props) => {
             <GroupProfileHeader group={group} />
 
             <MenuBarMember style={{marginTop: 10}} group={group} navigation={props.navigation} />
-            <NotesBar /> 
+            {/* <NotesBar /> re-enable when notes will be available in the backend */}
             <ShareButton group={group}/>
             <MyGroupsBar style={{marginTop: 25}} titleStyle={{marginBottom: 10}} title={"CATEGORIE"} rightViewVisible={false}>
                 { group.categorie.map(el => {
@@ -24,6 +24,7 @@ export default Profile = (props) => {
                         categoryTitle={el.descrizione_categoria} yourVote={0} generalRating={'0'}/>
                 })}
             </MyGroupsBar>
+            <View style={{height: 40, flexDirection: 'row', justifyContent: 'center'}}></View>
         </ScrollView>
     );
 }

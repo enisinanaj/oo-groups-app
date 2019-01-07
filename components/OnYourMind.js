@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import {
     View,
-    Text,
+    TextInput,
     Image,
     StyleSheet
 } from 'react-native';
@@ -33,7 +33,9 @@ export default class OnYourMind extends Component {
         return (
             <View style={styles.container}>
                 <Image source={{uri: User.getInstance().user.foto_profilo}} style={styles.profile}/>
-                <Text onPress={this.props.onFocus} style={styles.input}>Condividi la tua opinione con il gruppo...</Text>
+                <TextInput onFocus={() => this.props.onFocus()} style={styles.input}
+                    placeholder={"Condividi la tua opinione con il gruppo..."}
+                    placeholderTextColor={Colors.darkTitle}/>
             </View>
         )
     }
