@@ -6,7 +6,8 @@ import {
     View,
     TextInput,
     Image,
-    StyleSheet
+    StyleSheet,
+    Text
 } from 'react-native';
 import User from '../controllers/user/instance';
 import Colors from '../constants/Colors';
@@ -17,7 +18,7 @@ export default class OnYourMind extends Component {
         super(props);
 
         this.state = {
-            isReady: false
+            isReady: false,
         }
     }
 
@@ -32,7 +33,9 @@ export default class OnYourMind extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Image source={{uri: User.getInstance().user.foto_profilo}} style={styles.profile}/>
+                <View style={{ justifyContent: 'flex-start', flexDirection: 'row'}}>
+                    <Image source={{uri: User.getInstance().user.foto_profilo}} style={styles.profile}/>
+                </View>
                 <TextInput onFocus={() => this.props.onFocus()} style={styles.input}
                     placeholder={"Condividi la tua opinione con il gruppo..."}
                     placeholderTextColor={Colors.darkTitle}/>
@@ -47,8 +50,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         height: 70,
         backgroundColor: Colors.white,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15
+        borderRadius: 15,
+        // borderTopRightRadius: 15,
+        marginHorizontal: 10
     },
 
     input: {

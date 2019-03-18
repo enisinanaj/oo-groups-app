@@ -29,12 +29,37 @@ import APIConsts from './constants/APIConsts';
 import NewGroupModal from './components/NewGroupModal';
 import SelezioneCategoriaGruppo from './screens/SelezioneCategoriaGruppo';
 import SottoCategorieGruppo from './screens/SottoCategorieGruppo';
+
+import SelezionaCategoriaPost from './screens/SelezionaCategoriaPost'
 import Colors from './constants/Colors';
 import { Bubbles, Bars } from 'react-native-loader';
 import NewPost from './components/NewPost';
 
   const {width, height} = Dimensions.get('window');
   const RNFS = require('react-native-fs');
+
+  const NewPostStack = createStackNavigator({
+    NewPost: {
+      screen: NewPost,
+      navigationOptions: ({navigation}) => {
+        return {
+          headerTitle: 'Nuovo Post',
+          headerLeft: () => {
+            return (<TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={{marginLeft: 13, fontSize: 17, color: Colors.main}}>Indietro</Text>
+            </TouchableOpacity>)
+          }
+        }
+      }
+    },
+    SelezionaCategoriaPost: {
+      screen: SelezionaCategoriaPost
+    }
+  }, {
+    initialRouteName: 'NewPost',
+    mode: 'modal',
+    headerMode: 'none',
+  })
 
   const HomeStack = createStackNavigator(
     {
@@ -54,7 +79,10 @@ import NewPost from './components/NewPost';
         }
       },
       NewPost: {
-        screen: NewPost
+        screen: NewPostStack,
+        navigationOptions: {
+          headerMode: 'none'
+        }
       },
       Gallery:{
         screen: Gallery

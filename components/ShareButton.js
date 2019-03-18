@@ -22,8 +22,8 @@ export default class ShareButton extends React.Component {
 
     render() {
         return (
-            <View style={[styles.onYourMindContainer]}>
-                <OnYourMind onFocus={() => this.props.navigation.navigate('NewPost', {group: this.props.group})}/>
+            <View style={[styles.onYourMindContainer, Shadow.filterShadow]}>
+                <OnYourMind onFocus={() => this.props.navigation.navigate('NewPost', {group: this.props.group})} group={this.state.group}/>
             </View>
         )
     }
